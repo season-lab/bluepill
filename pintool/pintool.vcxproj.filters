@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\memory.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fpu.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\context.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\logging.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\libdft\bridge.cpp">
+      <Filter>libdft</Filter>
+    </ClCompile>
+    <ClCompile Include="src\libdft\libdft_api.cpp">
+      <Filter>libdft</Filter>
+    </ClCompile>
+    <ClCompile Include="src\libdft\libdft_core.cpp">
+      <Filter>libdft</Filter>
+    </ClCompile>
+    <ClCompile Include="src\libdft\tag_traits.cpp">
+      <Filter>libdft</Filter>
+    </ClCompile>
+    <ClCompile Include="src\libdft\tagmap.cpp">
+      <Filter>libdft</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HiddenElements.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\helper.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ins.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\exceptionHandler.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\functions.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\wmi.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\state.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\syshooking.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\syshooks.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\process.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source files">
+      <UniqueIdentifier>{e351ae10-7f4b-438c-b9dd-5ac8e4202289}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header files">
+      <UniqueIdentifier>{a5f1e442-61fc-4dcf-8628-560252b6df05}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libdft">
+      <UniqueIdentifier>{25a80272-668f-4457-afcf-1f3963deb8dd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\memory.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\fpu.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\context.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\logging.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\config.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\dbg.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libdft\array.hpp">
+      <Filter>libdft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libdft\branch_pred.h">
+      <Filter>libdft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libdft\libdft_api.h">
+      <Filter>libdft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libdft\libdft_config.h">
+      <Filter>libdft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libdft\libdft_core.h">
+      <Filter>libdft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libdft\tag_traits.h">
+      <Filter>libdft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libdft\tagmap.h">
+      <Filter>libdft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libdft\tagmap_custom.h">
+      <Filter>libdft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\libdft\bridge.h">
+      <Filter>libdft</Filter>
+    </ClInclude>
+    <ClInclude Include="src\HiddenElements.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\helper.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ins.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\exceptionHandler.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\functions.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\wmi.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\state.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\winheaders.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\syshooking.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\syshooks.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\process.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
