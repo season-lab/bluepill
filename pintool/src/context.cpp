@@ -26,7 +26,7 @@ VOID CONTEXT_ChangeContext(THREADID threadIndex, CONTEXT_CHANGE_REASON reason, c
 
 
 EXCEPT_HANDLING_RESULT CONTEXT_InternalExceptionHandler(THREADID tid, EXCEPTION_INFO *pExceptInfo, PHYSICAL_CONTEXT *pPhysCtxt, VOID *v) {
-	cout << PIN_ExceptionToString(pExceptInfo).c_str() << " Code: " << pExceptInfo->GetExceptCode() << endl; // TODO use macro to print
+	std::cout << PIN_ExceptionToString(pExceptInfo).c_str() << " Code: " << pExceptInfo->GetExceptCode() << std::endl; // TODO use macro to print
 																								 // handles single-step exception 
 	if (pExceptInfo->GetExceptCode() == EXCEPTCODE_DBG_SINGLE_STEP_TRAP) {
 		LOG_AR("[SINGLE_STEP] - *");

@@ -3,6 +3,8 @@
 
 #define MD5LEN  16
 
+using namespace std;
+
 namespace Helper {
 	size_t Helper::_strlen_a(const char *s) {
 		const char *s0 = s;

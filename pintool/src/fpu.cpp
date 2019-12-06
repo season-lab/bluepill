@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+using namespace std;
+
 REG spilledFpu;
 
 VOID FPU_Init() {

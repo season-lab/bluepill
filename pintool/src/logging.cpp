@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+using namespace std;
+
 FILE* Logging::mainLog;
 
 std::string getCurDateAndTime() {

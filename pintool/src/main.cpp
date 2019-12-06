@@ -20,6 +20,8 @@
 #include "libdft/libdft_api.h"
 #include "libdft/tagmap.h"
 
+using namespace std;
+
 
 TLS_KEY tls_key = INVALID_TLS_KEY;
 

@@ -1,6 +1,8 @@
 #include "ins.h"
 #include "winheaders.h"
 
+using namespace std;
+
 static map<UINT32, patch_struct*> patch_map;
 
 // helpers

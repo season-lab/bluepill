@@ -1,5 +1,7 @@
 #pragma once
-#include "pin.H"
+#include "pin.h"
+
+using namespace std; // TODO get rid of this...
 
 // enable to avoid supplying command-line args to Pin (see below)
 #define FIXED_KNOBS		1

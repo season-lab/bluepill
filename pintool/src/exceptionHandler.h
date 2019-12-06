@@ -3,7 +3,7 @@
 #include <iostream>
 
 namespace W {
-	#include "windows.h"
+	#include <windows.h>
 }
 
 class ExceptionHandler { // TODO turn it into a namespace

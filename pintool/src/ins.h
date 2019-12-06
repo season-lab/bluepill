@@ -31,5 +31,5 @@ VOID INS_patchCpuid_exit(ADDRINT ip, CONTEXT *ctxt, ADDRINT cur_eip);
 VOID INS_patchInt2d_entry(CONTEXT *ctx, THREADID tid, ADDRINT accessAddr);
 VOID INS_patchIn_exit(CONTEXT *ctx);
 VOID INS_AddInsStealth(INS ins);
-BOOL INS_EnableInsStealth(string input, string *result);
-BOOL INS_DisableInsStealth(string input, string *result);
+BOOL INS_EnableInsStealth(std::string input, std::string *result);
+BOOL INS_DisableInsStealth(std::string input, std::string *result);

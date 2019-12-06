@@ -1,8 +1,12 @@
-#include <iostream>
-
 #include "syshooking.h"
 #include "memory.h"
 #include "syshooks.h"
+
+#include <iostream>
+
+#include "state.h"
+#include "HiddenElements.h"
+#include "helper.h"
 
 namespace W {
 #include "windows.h"

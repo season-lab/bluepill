@@ -9,6 +9,8 @@
 #define SEG_PROT_W 2
 #define SEG_PROT_X 1
 
+using namespace std;
+
 namespace Process {
 	// helpers
 	std::ostream& stringify(std::ostream& out, std::string const& s);

@@ -23,6 +23,7 @@
     <RootNamespace>pintool</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>bluepill</ProjectName>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -47,7 +48,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v100</PlatformToolset>
+    <PlatformToolset>v140</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -100,7 +101,7 @@
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(PinFolder)\intel64\lib;$(PinFolder)\intel64\runtime\pincrt;$(PinFolder\extras\xed-intel64;$(LibraryPath)</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(WindowsSdkDir)\lib</LibraryPath>
     <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(WindowsSdkDir)\lib\x64</LibraryPath>
-    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(WindowsSdkDir)\lib</LibraryPath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(VC_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(WindowsSDK_LibraryPath_x86);$(NETFXKitsDir)Lib\um\x86;</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(PinFolder)\</OutDir>
@@ -253,8 +254,8 @@
       <AdditionalOptions>/EHs- /EHa- %(AdditionalOptions)</AdditionalOptions>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(PinFolder)\source\include\pin;$(PinFolder)\source\include\pin\gen;$(PinFolder)\extras\stlport\include;$(PinFolder)\extras;$(PinFolder)\extras\libstdc++\include;$(PinFolder)\extras\crt\include;$(PinFolder)\extras\crt;$(PinFolder)\extras\crt\include\kernel\uapi;$(PinFolder)\extras\crt\include\kernel\uapi\asm-x86;$(PinFolder)\extras\components\include;$(PinFolder)\extras\crt\include\arch-x86;$(PinFolder)\extras\xed-ia32\include\xed</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>TARGET_IA32;__i386__;HOST_IA32;__PIN__=1;PIN_CRT=1;TARGET_WINDOWS;BIGARRAY_MULTIPLIER=1;USING_XED;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;WIN32;_WINDOWS_H_PATH_=$(WindowsSdkDir)\Include;_PIN_FOLDER="$(PinFolder)"</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(PinFolder)\source\include\pin;$(PinFolder)\source\include\pin\gen;$(PinFolder)\source\tools\InstLib;$(PinFolder)\extras\xed-ia32\include\xed;$(PinFolder)\extras\components\include;$(PinFolder)\extras\stlport\include;$(PinFolder)\extras;$(PinFolder)\extras\libstdc++\include;$(PinFolder)\extras\crt\include;$(PinFolder)\extras\crt;$(PinFolder)\extras\crt\include\arch-x86;$(PinFolder)\extras\crt\include\kernel\uapi;$(PinFolder)\extras\crt\include\kernel\uapi\asm-x86;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>TARGET_IA32;HOST_IA32;TARGET_WINDOWS;WIN32;_WINDOWS_H_PATH_=$(WinHPath);__PIN__=1;PIN_CRT=1;__i386__</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>

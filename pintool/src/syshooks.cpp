@@ -1,6 +1,10 @@
 #include "syshooks.h"
 #include "memory.h"
 
+#include "state.h"
+#include "HiddenElements.h"
+#include "helper.h"
+
 #define STR_QDO				"s"
 #define WSTR_CREATEFILE		L"a"
 #define WSTR_REGKEYORVAL	L"a"

@@ -40,6 +40,6 @@ namespace Helper {
 
 	size_t _strlen_a(const char *s);
 	W::DWORD GetProcessIdByName(char* procName);
-	string GetNameFromPid(W::DWORD pid);
+	std::string GetNameFromPid(W::DWORD pid);
 
 };

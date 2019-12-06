@@ -1,10 +1,6 @@
 #pragma once
-#include "pin.H"
-
+#include "pin.h"
 #include "config.h"
-#include "state.h"
-#include "HiddenElements.h"
-#include "helper.h"
 
 
 /** THESE NUMBERS ARE TAILORED TO WINDOWS 7 SP1 **/

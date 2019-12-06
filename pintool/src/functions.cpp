@@ -4,7 +4,10 @@
 #include "types.h"
 #include "state.h"
 
+#include <string>
 #include <iostream>
+
+using namespace std; // KTM FP
 
 #define MAX_MAC_ADDRESS_SIZE		50
 #define MAX_GETPROCADDR_ORDINAL		0x200
@@ -21,114 +24,114 @@ const char fakeProcess[] = BP_FAKEPROCESS;
 
 namespace Functions {
 	// for internal use only
-	static std::map<string, int> fMap;
+	static std::map<std::string, int> fMap;
 
 	// this function populates a hook/API map that we inspect during AOT instrumentation
 	void Init() {
 
-		fMap.insert(std::pair<string, int>("NtDelayExecution", NTDELAYEXEC_INDEX));
-		fMap.insert(std::pair<string, int>("NtQueryPerformanceCounter", NTQUERYPERF_INDEX));
+		fMap.insert(std::pair<std::string, int>("NtDelayExecution", NTDELAYEXEC_INDEX));
+		fMap.insert(std::pair<std::string, int>("NtQueryPerformanceCounter", NTQUERYPERF_INDEX));
 
-		fMap.insert(std::pair<string, int>("FindFirstFile", GETFIRSTFILE_INDEX));
-		fMap.insert(std::pair<string, int>("FindFirstFileA", GETFIRSTFILE_INDEX));
-		fMap.insert(std::pair<string, int>("FindFirstFileW", GETFIRSTFILE_INDEX));
+		fMap.insert(std::pair<std::string, int>("FindFirstFile", GETFIRSTFILE_INDEX));
+		fMap.insert(std::pair<std::string, int>("FindFirstFileA", GETFIRSTFILE_INDEX));
+		fMap.insert(std::pair<std::string, int>("FindFirstFileW", GETFIRSTFILE_INDEX));
 
-		fMap.insert(std::pair<string, int>("FindNextFile", GETFIRSTFILE_INDEX));
-		fMap.insert(std::pair<string, int>("FindNextFileA", GETFIRSTFILE_INDEX));
-		fMap.insert(std::pair<string, int>("FindNextFileW", GETFIRSTFILE_INDEX));
+		fMap.insert(std::pair<std::string, int>("FindNextFile", GETFIRSTFILE_INDEX));
+		fMap.insert(std::pair<std::string, int>("FindNextFileA", GETFIRSTFILE_INDEX));
+		fMap.insert(std::pair<std::string, int>("FindNextFileW", GETFIRSTFILE_INDEX));
 
-		fMap.insert(std::pair<string, int>("GetAdaptersInfo", GETADAPTER_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetAdaptersInfo", GETADAPTER_INDEX));
 
-		fMap.insert(std::pair<string, int>("GetSystemInfo", SYSINFO_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetSystemInfo", SYSINFO_INDEX));
 
-		fMap.insert(std::pair<string, int>("GetCursorPos", GETCUR_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetCursorPos", GETCUR_INDEX));
 
-		fMap.insert(std::pair<string, int>("FindWindow", FINDWINDOW_INDEX));
-		fMap.insert(std::pair<string, int>("FindWindowW", FINDWINDOW_INDEX));
-		fMap.insert(std::pair<string, int>("FindWindowA", FINDWINDOW_INDEX));
+		fMap.insert(std::pair<std::string, int>("FindWindow", FINDWINDOW_INDEX));
+		fMap.insert(std::pair<std::string, int>("FindWindowW", FINDWINDOW_INDEX));
+		fMap.insert(std::pair<std::string, int>("FindWindowA", FINDWINDOW_INDEX));
 
-		fMap.insert(std::pair<string, int>("WNetGetProviderName", WGETNET_INDEX));
-		fMap.insert(std::pair<string, int>("WNetGetProviderNameW", WGETNET_INDEX));
-		fMap.insert(std::pair<string, int>("WNetGetProviderNameA", WGETNET_INDEX));
+		fMap.insert(std::pair<std::string, int>("WNetGetProviderName", WGETNET_INDEX));
+		fMap.insert(std::pair<std::string, int>("WNetGetProviderNameW", WGETNET_INDEX));
+		fMap.insert(std::pair<std::string, int>("WNetGetProviderNameA", WGETNET_INDEX));
 
-		fMap.insert(std::pair<string, int>("NtClose", CLOSEH_INDEX)); // syscall was tricky, we hook it from here for now
+		fMap.insert(std::pair<std::string, int>("NtClose", CLOSEH_INDEX)); // syscall was tricky, we hook it from here for now
 
-		fMap.insert(std::pair<string, int>("GetKeyboardLayout", KEYB_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetKeyboardLayout", KEYB_INDEX));
 
-		fMap.insert(std::pair<string, int>("GetPwrCapabilities", POWCAP_INDEX));
-
-
-		fMap.insert(std::pair<string, int>("ChangeServiceConfigW", CHANGSERV_INDEX));
-
-		fMap.insert(std::pair<string, int>("InitiateSystemShutdownExW", SHUTD_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetPwrCapabilities", POWCAP_INDEX));
 
 
-		fMap.insert(std::pair<string, int>("SetupDiGetDeviceRegistryProperty", SETUPDEV_INDEX));
-		fMap.insert(std::pair<string, int>("SetupDiGetDeviceRegistryPropertyW", SETUPDEV_INDEX));
-		fMap.insert(std::pair<string, int>("SetupDiGetDeviceRegistryPropertyA", SETUPDEV_INDEX));
+		fMap.insert(std::pair<std::string, int>("ChangeServiceConfigW", CHANGSERV_INDEX));
+
+		fMap.insert(std::pair<std::string, int>("InitiateSystemShutdownExW", SHUTD_INDEX));
+
+
+		fMap.insert(std::pair<std::string, int>("SetupDiGetDeviceRegistryProperty", SETUPDEV_INDEX));
+		fMap.insert(std::pair<std::string, int>("SetupDiGetDeviceRegistryPropertyW", SETUPDEV_INDEX));
+		fMap.insert(std::pair<std::string, int>("SetupDiGetDeviceRegistryPropertyA", SETUPDEV_INDEX));
 
 		// TODO do we need something for Ex?
-		fMap.insert(std::pair<string, int>("GetModuleFileName", GETMODULE_INDEX));
-		fMap.insert(std::pair<string, int>("GetModuleFileNameA", GETMODULE_INDEX));
-		fMap.insert(std::pair<string, int>("GetModuleFileNameW", GETMODULE_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetModuleFileName", GETMODULE_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetModuleFileNameA", GETMODULE_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetModuleFileNameW", GETMODULE_INDEX));
 
 
-		fMap.insert(std::pair<string, int>("K32GetDeviceDriverBaseName", DEVICEBASE_INDEX));
-		fMap.insert(std::pair<string, int>("K32GetDeviceDriverBaseNameA", DEVICEBASE_INDEX));
-		fMap.insert(std::pair<string, int>("K32GetDeviceDriverBaseNameW", DEVICEBASE_INDEX));
+		fMap.insert(std::pair<std::string, int>("K32GetDeviceDriverBaseName", DEVICEBASE_INDEX));
+		fMap.insert(std::pair<std::string, int>("K32GetDeviceDriverBaseNameA", DEVICEBASE_INDEX));
+		fMap.insert(std::pair<std::string, int>("K32GetDeviceDriverBaseNameW", DEVICEBASE_INDEX));
 
-		fMap.insert(std::pair<string, int>("GetWindowText", WINNAME_INDEX));
-		fMap.insert(std::pair<string, int>("GetWindowTextA", WINNAME_INDEX));
-		fMap.insert(std::pair<string, int>("GetWindowTextW", WINNAME_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetWindowText", WINNAME_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetWindowTextA", WINNAME_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetWindowTextW", WINNAME_INDEX));
 
-		//fMap.insert(std::pair<string, int>("LoadLibrary", LOADLIB_INDEX));
-		fMap.insert(std::pair<string, int>("LoadLibraryA", LOADLIBA_INDEX));
-		fMap.insert(std::pair<string, int>("LoadLibraryW", LOADLIBW_INDEX));
-		//fMap.insert(std::pair<string, int>("LoadLibraryEx", LOADLIB_INDEX));
-		fMap.insert(std::pair<string, int>("LoadLibraryExA", LOADLIBA_INDEX));
-		fMap.insert(std::pair<string, int>("LoadLibraryExW", LOADLIBW_INDEX));
+		//fMap.insert(std::pair<std::string, int>("LoadLibrary", LOADLIB_INDEX));
+		fMap.insert(std::pair<std::string, int>("LoadLibraryA", LOADLIBA_INDEX));
+		fMap.insert(std::pair<std::string, int>("LoadLibraryW", LOADLIBW_INDEX));
+		//fMap.insert(std::pair<std::string, int>("LoadLibraryEx", LOADLIB_INDEX));
+		fMap.insert(std::pair<std::string, int>("LoadLibraryExA", LOADLIBA_INDEX));
+		fMap.insert(std::pair<std::string, int>("LoadLibraryExW", LOADLIBW_INDEX));
 
-		fMap.insert(std::pair<string, int>("_popen", POPEN_INDEX));
-		fMap.insert(std::pair<string, int>("_wpopen", POPEN_INDEX));
-		fMap.insert(std::pair<string, int>("_tpopen", POPEN_INDEX));
+		fMap.insert(std::pair<std::string, int>("_popen", POPEN_INDEX));
+		fMap.insert(std::pair<std::string, int>("_wpopen", POPEN_INDEX));
+		fMap.insert(std::pair<std::string, int>("_tpopen", POPEN_INDEX));
 
-		fMap.insert(std::pair<string, int>("GetDiskFreeSpaceEx", GETDISKSPACE_INDEX));
-		fMap.insert(std::pair<string, int>("GetDiskFreeSpaceExW", GETDISKSPACE_INDEX));
-		fMap.insert(std::pair<string, int>("GetDiskFreeSpaceExA", GETDISKSPACE_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetDiskFreeSpaceEx", GETDISKSPACE_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetDiskFreeSpaceExW", GETDISKSPACE_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetDiskFreeSpaceExA", GETDISKSPACE_INDEX));
 
-		fMap.insert(std::pair<string, int>(
+		fMap.insert(std::pair<std::string, int>(
 			"?Get@CWbemObject@@UAGJPBGJPAUtagVARIANT@@PAJ2@Z",
 			WMI_INDEX)
 		);
 
 		// timing (TODO most of these are only for logging - PUUUUH)
-		fMap.insert(std::pair<string, int>("GetTickCount", GETTICKCOUNT_INDEX));
-		fMap.insert(std::pair<string, int>("SetTimer", SETTIMER_INDEX));
-		fMap.insert(std::pair<string, int>("WaitForSingleObject", WAITOBJ_INDEX));
-		fMap.insert(std::pair<string, int>("GetSystemTimeAsFileTime", TIMEASFILE_INDEX));
-		fMap.insert(std::pair<string, int>("IcmpCreateFile", ICMPFILE_INDEX));
-		fMap.insert(std::pair<string, int>("IcmpSendEcho", ICMPECHO_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetTickCount", GETTICKCOUNT_INDEX));
+		fMap.insert(std::pair<std::string, int>("SetTimer", SETTIMER_INDEX));
+		fMap.insert(std::pair<std::string, int>("WaitForSingleObject", WAITOBJ_INDEX));
+		fMap.insert(std::pair<std::string, int>("GetSystemTimeAsFileTime", TIMEASFILE_INDEX));
+		fMap.insert(std::pair<std::string, int>("IcmpCreateFile", ICMPFILE_INDEX));
+		fMap.insert(std::pair<std::string, int>("IcmpSendEcho", ICMPECHO_INDEX));
 
 		/* DEBUG HOOKS */
 #if 0
-		fMap.insert(std::pair<string, int>("RtlCompareUnicodeString", RTLSTR_INDEX));
-		fMap.insert(std::pair<string, int>("RtlEqualUnicodeString", RTLSTR_INDEX));
+		fMap.insert(std::pair<std::string, int>("RtlCompareUnicodeString", RTLSTR_INDEX));
+		fMap.insert(std::pair<std::string, int>("RtlEqualUnicodeString", RTLSTR_INDEX));
 
-		fMap.insert(std::pair<string, int>("wcsstr", WCSSTR_INDEX));
-		fMap.insert(std::pair<string, int>("wcscmp", WCSCMP_INDEX));
-		fMap.insert(std::pair<string, int>("wcsncmp", WCSCMP_INDEX));
-		fMap.insert(std::pair<string, int>("_wcsnicmp", WCSCMP_INDEX));
+		fMap.insert(std::pair<std::string, int>("wcsstr", WCSSTR_INDEX));
+		fMap.insert(std::pair<std::string, int>("wcscmp", WCSCMP_INDEX));
+		fMap.insert(std::pair<std::string, int>("wcsncmp", WCSCMP_INDEX));
+		fMap.insert(std::pair<std::string, int>("_wcsnicmp", WCSCMP_INDEX));
 
-		fMap.insert(std::pair<string, int>("strstr", STRSTR_INDEX));
-		fMap.insert(std::pair<string, int>("strcmp", STRCMP_INDEX));
-		fMap.insert(std::pair<string, int>("_strcmpi", STRCMP_INDEX));
+		fMap.insert(std::pair<std::string, int>("strstr", STRSTR_INDEX));
+		fMap.insert(std::pair<std::string, int>("strcmp", STRCMP_INDEX));
+		fMap.insert(std::pair<std::string, int>("_strcmpi", STRCMP_INDEX));
 
-		fMap.insert(std::pair<string, int>("CompareString", CMPSTR_INDEX));
-		fMap.insert(std::pair<string, int>("CompareStringA", CMPSTR_INDEX));
-		fMap.insert(std::pair<string, int>("CompareStringW", CMPSTR_INDEX));
-		fMap.insert(std::pair<string, int>("CompareStringEx", CMPSTR_INDEX));
-		fMap.insert(std::pair<string, int>("CompareStringExA", CMPSTR_INDEX));
-		fMap.insert(std::pair<string, int>("CompareStringExW", CMPSTR_INDEX));
+		fMap.insert(std::pair<std::string, int>("CompareString", CMPSTR_INDEX));
+		fMap.insert(std::pair<std::string, int>("CompareStringA", CMPSTR_INDEX));
+		fMap.insert(std::pair<std::string, int>("CompareStringW", CMPSTR_INDEX));
+		fMap.insert(std::pair<std::string, int>("CompareStringEx", CMPSTR_INDEX));
+		fMap.insert(std::pair<std::string, int>("CompareStringExA", CMPSTR_INDEX));
+		fMap.insert(std::pair<std::string, int>("CompareStringExW", CMPSTR_INDEX));
 #endif
 		/* END OF DEBUG HOOKS */
 

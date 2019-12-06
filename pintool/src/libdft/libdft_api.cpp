@@ -53,6 +53,8 @@
 #include "tagmap.h"
 #include "branch_pred.h"
 
+using namespace std;
+
 
 /* 
  * thread context pointer (TLS emulation); we
