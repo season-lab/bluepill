@@ -19,15 +19,17 @@ try:
         name = os.path.basename(pathname)
         sclass = "DATA" # TODO recognize automatically sclass
         idaapi.add_segm(0, start, end, name, sclass)
-  			idc.set_segm_attr(start, SEGATTR_PERM, perms)
-			  idc.set_segm_attr(start, SEGATTR_ES, 0)
-			  idc.set_segm_attr(start, SEGATTR_CS, 0)
-			  idc.set_segm_attr(start, SEGATTR_SS, 0)
-			  idc.set_segm_attr(start, SEGATTR_DS, 0)
-			  idc.set_segm_attr(start, SEGATTR_FS, 0)
-			  idc.set_segm_attr(start, SEGATTR_GS, 0)
+        idc.set_segm_attr(start, SEGATTR_PERM, perms)
+        idc.set_segm_attr(start, SEGATTR_ES, 0)
+        idc.set_segm_attr(start, SEGATTR_CS, 0)
+        idc.set_segm_attr(start, SEGATTR_SS, 0)
+        idc.set_segm_attr(start, SEGATTR_DS, 0)
+        idc.set_segm_attr(start, SEGATTR_FS, 0)
+        idc.set_segm_attr(start, SEGATTR_GS, 0)
 except:
-	#self.AddLine(idaapi.COLSTR("Debugger is not active or does not export send_dbg_command()", idaapi.SCOLOR_ERROR))
-	print ("Debugger is not active or does not export send_dbg_command()")
+    #self.AddLine(idaapi.COLSTR("Debugger is not active or does not export send_dbg_command()", idaapi.SCOLOR_ERROR))
+    import traceback
+    traceback.print_exc()
+    print ("\nDebugger is not active or does not export send_dbg_command()")
 
 
