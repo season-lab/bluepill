@@ -29,6 +29,6 @@ C:\Pin311\pin.exe -appdebug —appdebug_server_port 10000 -t bluepill32.dll -deb
 
 And connect to the desired port number. The application will stay paused until you connect a debugger, but if you instead attach one to the process you will end up debugging Pin and the JIT-ted code. For IDA Pro users select the *Remote GDB debugger* option and connect to `localhost`. To map missing memory segments you can use the `AddSegments.py` IDAPython script available in the `scripts/` folder: we defined a custom `vmmap` GDB command that gets invoked by the script and transfers memory layout information from the pintool to the debugger.
 
-Exception handling requires a workaround for the current GDB server implementation. When you need to pass an exception to the application just send a `wait` command right after you receive the exception message, then disconnect and reconnect IDA to BluePill, which meanwhile will put the execution on hold in response to the command.
+Exception handling requires a workaround for the current GDB server implementation. When you need to pass an exception to the application just send a `wait` [monitor command](https://www.hex-rays.com/products/ida/support/idadoc/1335.shtml) right after you receive the exception message, then disconnect and reconnect IDA to BluePill, which meanwhile will put the execution on hold in response to the command.
 
 P.S. Apologies for the incompleteness/minimalism in the documentation: we wanted to release the code as soon as possible while we keep working on the docs :-)
