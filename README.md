@@ -3,13 +3,13 @@
 BluePill is an open-source dynamic analysis framework for neutralizing evasive behavior in malware.
 It aims at reconciling transparency requirements typical of automatic malware analysis with manipulation capabilities required for dissection.
 
-The repository contains a polished snapshot of code under active development, and for the time being we share it with the community as such: BluePill is a research prototype and any feedback would be **greatly** appreciated. 
+The repository contains a polished snapshot of code under active development, and for the time being we share it with the community as such: BluePill is currently a research prototype, and any feedback would be **greatly** appreciated. 
 
-BluePill build on dynamic binary instrumentation to observe, check, and replace outputs in adversarial queries that a sample can make on the environment, when their results would give away the presence of an analysis system and/or a human agent behind it.
+BluePill build on dynamic binary instrumentation (DBI) to observe outputs in adversarial queries that a sample can make on the environment, and fix them when their results would give away the presence of an analysis system or human agents behind it.
 
 It builds on Intel Pin (we just added support for v3.11) and requires Visual Studio 2015 for its compilation. Make sure you extract the working tree of Pin to `C:\Pin311` or change the related property value in the Visual Studio project we provide.
 
-BluePill has been tested on 32-bit malware running on Windows 7 SP1, mainly on a 32-bit install and to a good extent under WoW64. We will be porting BluePill to newer Pin and VS releases soon, after proper testing. 64-bit support does not require changes to the design and we will hopefully be releasing to production soon, along with richer documentation for using BluePill.
+BluePill has been tested on 32-bit malware running on Windows 7 SP1, mainly on a 32-bit install and to a good extent under WoW64. Support to 64-bit malware does not require changes to the design: we handle it in our internal fork, and we will hopefully be releasing this code soon.
 
 To cope with DBI artifacts, BluePill builds on a library of mitigations for Intel Pin devised as part of the [code](https://github.com/season-lab/sok-dbi-security/) from our ACM ASIACCS 2019 paper *SoK: Using Dynamic Binary Instrumentation for Security (And How You May Get Caught Red-Handed)*. We have extended the work with additional mitigations for DBI overheads and other red pills targeting debugging and exceptions.
 
@@ -31,4 +31,8 @@ And connect to the desired port number. The application will stay paused until y
 
 Exception handling requires a workaround for the current GDB server implementation. When you need to pass an exception to the application just send a `wait` command right after you receive the exception message, then disconnect and reconnect IDA to BluePill, which meanwhile will put the execution on hold in response to the command.
 
-P.S. Apologies for the incompleteness/minimalism in the documentation: we wanted to release the code as soon as possible while we keep working on the docs :-)
+*We apologize for the incompleteness/minimalism in the documentation. We wanted to release the code as soon as possible while we keep working on the docs and on making the interfaces smoother :-)*
+
+### Authors
+* Daniele Cono D'Elia ([@dcdelia](https://github.com/dcdelia)) - design
+* Federico Palmaro ([@nik94](https://github.com/nik94)) - main developer
