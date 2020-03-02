@@ -1,5 +1,7 @@
 # BluePill
 
+**Update:** Our article "On the Dissection of Evasive Malware" describing BluePill was accepted for publication in IEEE Transactions on Information Forensics and Security (TIFS): you can find it [here](https://ieeexplore.ieee.org/document/9018111). *We will extend the instructions below in the next few days* :-)
+
 BluePill is an open-source dynamic analysis framework for neutralizing evasive behavior in malware.
 It aims at reconciling transparency requirements typical of automatic malware analysis with manipulation capabilities required for dissection.
 
