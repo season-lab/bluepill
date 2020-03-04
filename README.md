@@ -1,25 +1,34 @@
 # BluePill
 
-**Update:** Our article "On the Dissection of Evasive Malware" describing BluePill was accepted for publication in IEEE Transactions on Information Forensics and Security (TIFS): you can find it [here](https://ieeexplore.ieee.org/document/9018111). *We will extend the instructions below in the next few days* :-)
+**Update (Mar 4, 2020):** *An article on BluePill just got accepted at TIFS (see below). We are now extending the documentation! :-)*
 
-BluePill is an open-source dynamic analysis framework for neutralizing evasive behavior in malware.
-It aims at reconciling transparency requirements typical of automatic malware analysis with manipulation capabilities required for dissection.
+**BluePill** is an open-source dynamic analysis framework for handling evasive malware. Its goal is to reconcile the transparency properties needed for automatic analyses with the fine-grained execution inspection and altering capabilities required for manual analysis. BluePill is an academic prototype under active development: as we share it as such, any feedback is greatly appreciated!
 
-The repository contains a polished snapshot of code under active development, and for the time being we share it with the community as such: BluePill is currently a research prototype, and any feedback would be **greatly** appreciated. 
+BluePill can counter many red pills targeting hypervisors, debuggers, third-party analysis tools (e.g. IDA Pro), and timing artifacts. It builds on dynamic binary instrumentation (DBI) to monitor adversarial queries that a sample can make on the environment looking for artifacts, and fix them when their results would give away the presence of an automated analysis or a human agent.
 
-BluePill build on dynamic binary instrumentation (DBI) to observe outputs in adversarial queries that a sample can make on the environment, and fix them when their results would give away the presence of an analysis system or human agents behind it.
+BluePill offers a GDB remote interface to analysts to debug a sample, complemented by a stealth patching mechanisms to hide code changes made in the debugger from self-checksumming schemes.
 
-It builds on Intel Pin (we just added support for v3.11) and requires Visual Studio 2015 for its compilation. Make sure you extract the working tree of Pin to `C:\Pin311` or change the related property value in the Visual Studio project we provide.
+We tested BluePill on heterogeneous PE32 malware running on 32-bit Windows 7 SP1: as an example, we can run executables protected with recent versions of VMProtect and Themida, and highly evasive samples like Furtim.
 
-BluePill has been tested on 32-bit malware running on Windows 7 SP1, mainly on a 32-bit install and to a good extent under WoW64. Support to 64-bit malware does not require changes to the design: we handle it in our internal fork, and we will hopefully be releasing this code soon.
+To counter DBI evasions, BluePill uses a [library of mitigations](https://github.com/season-lab/sok-dbi-security/) that we wrote for Intel Pin as part of our paper *SoK: Using Dynamic Binary Instrumentation for Security (And How You May Get Caught Red-Handed)* from ASIACCS 2019. We have extended the library with further mitigations for time overheads and red pills targeting debugging via GDB remote interface and exception handling.
 
-To cope with DBI artifacts, BluePill builds on a library of mitigations for Intel Pin devised as part of the [code](https://github.com/season-lab/sok-dbi-security/) from our ACM ASIACCS 2019 paper *SoK: Using Dynamic Binary Instrumentation for Security (And How You May Get Caught Red-Handed)*. We have extended the work with additional mitigations for DBI overheads and other red pills targeting debugging and exceptions.
+BluePill has been presented in:
+* ***Black Hat Europe 2019***. *BluePill: Neutralizing Anti-Analysis Behavior in Malware Dissection*. [[link]](https://www.blackhat.com/eu-19/briefings/schedule/index.html#bluepill-neutralizing-anti-analysis-behavior-in-malware-dissection-17685) [[slides]](https://i.blackhat.com/eu-19/Wednesday/eu-19-Delia-BluePill-Neutralizing-Anti-Analysis-Behavior-In-Malware-Dissection.pdf)
+* ***TIFS 2020*** (IEEE Transactions on Information Forensics and Security). *On the Dissection of Evasive Malware*. [[paper]](https://ieeexplore.ieee.org/document/9018111)
 
-Once you compile BluePill, you will find a `bluepill32.dll` library in `C:\Pin311`. To run a program under BluePill use:
+*Before going public for BH Europe 2019, we made radical changes that negatively affected the handling of 64-bit code and partially of the WoW64 subsystem: please consider these scenarios experimental as we complete the regression fixing behind the scenes.*
+
+### Quick start
+
+BluePill builds on Intel Pin and requires Visual Studio 2015 for its compilation.
+
+Extract a recent release of Pin to your disk drive and change the path-related property value in the Visual Studio project when needed: by default we assume Pin v3.11 installed in `C:\Pin311`. Once compilation ends, you will find a `bluepill32.dll` library in `C:\Pin311`. To run an executable under BluePill use:
 
 ```
 C:\Pin311\pin.exe -t bluepill32.dll -- <file.exe>
 ```
+
+*>>> We will shortly add a table of the command-line knobs for the tool and a nicer guide to set up a remote GDB session from IDA Pro over BluePill. Please be patient with us for a little bit longer :-) <<<*
 
 Change the defaults in `config.h` to control the mitigations used by default or to enable command-line knobs for them (in the latter case set the `FIXED_KNOBS` macro to `0`).
 
@@ -33,7 +42,6 @@ And connect to the desired port number. The application will stay paused until y
 
 Exception handling requires a workaround for the current GDB server implementation. When you need to pass an exception to the application just send a `wait` command right after you receive the exception message, then disconnect and reconnect IDA to BluePill, which meanwhile will put the execution on hold in response to the command.
 
-*We apologize for the incompleteness/minimalism in the documentation. We wanted to release the code as soon as possible while we keep working on the docs and on making the interfaces smoother :-)*
 
 ### Authors
 * Daniele Cono D'Elia ([@dcdelia](https://github.com/dcdelia)) - design
