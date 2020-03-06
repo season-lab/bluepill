@@ -32,6 +32,7 @@ BOOL _rwKnob;
 BOOL _leakKnob;
 BOOL _libdftKnob;
 BOOL _evasions;
+BOOL _debugger;
 #endif
 
 // knobs for BluePill

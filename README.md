@@ -50,7 +50,7 @@ BluePill will create a file named `evasions.log` under Pin's folder `C:\Pin311` 
 
 *>>> We will shortly extend this part and improve (with images) the guide below for setting up a remote GDB session from IDA Pro over BluePill. Please be patient with us for a little bit longer :-) <<<*
 
-### Debugging over GDB remote interface
+### Debugging via GDB remote interface
 
 To access dissection capabilities of BluePill you need to connect from a debugger to the GDB remote interface of Pin. To this end you need to provide additional options when invoking Pin of the form:
 
