@@ -16,7 +16,7 @@ BluePill has been presented in:
 * ***Black Hat Europe 2019***. *BluePill: Neutralizing Anti-Analysis Behavior in Malware Dissection*. [[link]](https://www.blackhat.com/eu-19/briefings/schedule/index.html#bluepill-neutralizing-anti-analysis-behavior-in-malware-dissection-17685) [[slides]](https://i.blackhat.com/eu-19/Wednesday/eu-19-Delia-BluePill-Neutralizing-Anti-Analysis-Behavior-In-Malware-Dissection.pdf)
 * ***TIFS 2020*** (IEEE Transactions on Information Forensics and Security). *On the Dissection of Evasive Malware*. [[paper]](https://ieeexplore.ieee.org/document/9018111)
 
-*Before going public for BH Europe 2019, we made radical changes that negatively affected the handling of 64-bit code and partially of the WoW64 subsystem: please consider these scenarios experimental as we complete the regression fixing behind the scenes.*
+*Before going public for BH Europe 2019, we made radical changes that broke the handling of 64-bit code and partially of the WoW64 subsystem: please consider these scenarios experimental as we complete the regression testing.*
 
 ### Quick start
 
@@ -25,10 +25,32 @@ BluePill builds on Intel Pin and requires Visual Studio 2015 for its compilation
 Extract a recent release of Pin to your disk drive and change the path-related property value in the Visual Studio project when needed: by default we assume Pin v3.11 installed in `C:\Pin311`. Once compilation ends, you will find a `bluepill32.dll` library in `C:\Pin311`. To run an executable under BluePill use:
 
 ```
-C:\Pin311\pin.exe -t bluepill32.dll -- <file.exe>
+C:\Pin311\pin.exe -t bluepill32.dll [options] -- <file.exe>
 ```
 
-*>>> We will shortly add a table of the command-line knobs for the tool and a nicer guide to set up a remote GDB session from IDA Pro over BluePill. Please be patient with us for a little bit longer :-) <<<*
+BluePill supports the following command-line options:
+
+Option | Meaning
+--- | --- 
+`-evasions` | Detect and handle the majority of evasions supported (see below for DBI)
+`-debugger` | Enable debugger mode via GDB remote interface
+`-leak` | DBI evasions: fix leaks of real EIP (e.g. FPU instructions)
+`-nx` | DBI evasions: check that code pages are executable
+`-rw` | DBI evasions: hide pages that belong to the DBI engine
+
+For instance, to run an evasive program named `sample.exe` in a sandbox-like automatic mode try:
+
+```
+C:\Pin311\pin.exe -t bluepill32.dll -evasions -leak  -- sample.exe
+```
+
+Enabling the `-leak` mitigation has minimal performance impact, while `-nx` and ultimately `-rw` can help with complex packers that attempt conformance checking on the address space of the program.
+
+BluePill will create a file named `evasions.log` under Pin's folder `C:\Pin311` (modify the `LOGPATH` variable inside `pintool\src\logging.h` to change it) that logs possible evasion attempts intercepted during the execution.  
+
+*>>> We will shortly extend this part and improve the guide below for setting up a remote GDB session from IDA Pro over BluePill. Please be patient with us for a little bit longer :-) <<<*
+
+### Debugging over GDB remote interface
 
 Change the defaults in `config.h` to control the mitigations used by default or to enable command-line knobs for them (in the latter case set the `FIXED_KNOBS` macro to `0`).
 

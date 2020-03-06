@@ -1,8 +1,8 @@
 #pragma once
 #include "pin.H"
 
-#define LOGPATH "C:\\pin35\\"
-#define LOGNAME "guards.log"
+#define LOGPATH "C:\\pin311\\"
+#define LOGNAME "evasions.log"
 #define LOG_BUILD 1
 
 #define LOG_AR(fmt, ...) \
