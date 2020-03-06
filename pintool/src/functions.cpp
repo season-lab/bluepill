@@ -46,6 +46,8 @@ namespace Functions {
 
 		fMap.insert(std::pair<std::string, int>("GetCursorPos", GETCUR_INDEX));
 
+		fMap.insert(std::pair<std::string, int>("getenv", GETENV_INDEX));
+
 		fMap.insert(std::pair<std::string, int>("FindWindow", FINDWINDOW_INDEX));
 		fMap.insert(std::pair<std::string, int>("FindWindowW", FINDWINDOW_INDEX));
 		fMap.insert(std::pair<std::string, int>("FindWindowA", FINDWINDOW_INDEX));
@@ -260,6 +262,12 @@ namespace Functions {
 
 				case(POPEN_INDEX):
 					RTN_InsertCall(rtn, IPOINT_BEFORE, (AFUNPTR)_popenHook,
+						IARG_FUNCARG_ENTRYPOINT_REFERENCE, 0,
+						IARG_END);
+					break;
+
+				case(GETENV_INDEX):
+					RTN_InsertCall(rtn, IPOINT_BEFORE, (AFUNPTR)GetEnvHookEntry,
 						IARG_FUNCARG_ENTRYPOINT_REFERENCE, 0,
 						IARG_END);
 					break;
@@ -1057,6 +1065,20 @@ VOID ChangeServiceConfigWHook(W::SC_HANDLE *hService) {
 
 	*hService = NULL;
 
+}
+
+VOID GetEnvHookEntry(CHAR** var) {
+
+	if (var == NULL || *var == NULL) return;
+
+	char value[PATH_BUFSIZE];
+	GET_STR_TO_UPPER(*var, value, PATH_BUFSIZE);
+
+	W::DWORD oldp;
+	W::VirtualProtect(*var, strlen(*var), PAGE_READWRITE, &oldp);
+	memset(*var, 0, strlen(*var));
+	W::VirtualProtect(*var, strlen(*var), oldp, &oldp);
+	
 }
 
 /** REPLACEMENT FUNCTIONS **/

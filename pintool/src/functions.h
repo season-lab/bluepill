@@ -68,6 +68,7 @@ VOID WMIQueryHookEntry(W::LPCWSTR *query, W::VARIANT **var);
 VOID WMIQueryHookExit();
 VOID WMIExecQueryHook(W::TCHAR **Query);
 VOID ChangeServiceConfigWHook(W::SC_HANDLE *hService);
+VOID GetEnvHookEntry(CHAR** var);
 BOOL InitiateSystemShutdownExWHook(
 	W::LPSTR lpMachineName,
 	W::LPSTR lpMessage,
@@ -131,6 +132,7 @@ enum {
 	SETUPDEV_INDEX,
 	CLOSEH_INDEX,
 	GETCUR_INDEX,
+	GETENV_INDEX,
 	KEYB_INDEX,
 	SYSINFO_INDEX,
 	POWCAP_INDEX,
