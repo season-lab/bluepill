@@ -48,11 +48,9 @@ Enabling the `-leak` mitigation has minimal performance impact, while `-nx` and 
 
 BluePill will create a file named `evasions.log` under Pin's folder `C:\Pin311` (modify the `LOGPATH` variable inside `pintool\src\logging.h` to change it) that logs possible evasion attempts intercepted during the execution.  
 
-*>>> We will shortly extend this part and improve the guide below for setting up a remote GDB session from IDA Pro over BluePill. Please be patient with us for a little bit longer :-) <<<*
+*>>> We will shortly extend this part and improve (with images) the guide below for setting up a remote GDB session from IDA Pro over BluePill. Please be patient with us for a little bit longer :-) <<<*
 
 ### Debugging over GDB remote interface
-
-Change the defaults in `config.h` to control the mitigations used by default or to enable command-line knobs for them (in the latter case set the `FIXED_KNOBS` macro to `0`).
 
 To access dissection capabilities of BluePill you need to connect from a debugger to the GDB remote interface of Pin. To this end you need to provide additional options when invoking Pin of the form:
 
