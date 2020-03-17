@@ -166,6 +166,7 @@ VOID Image(IMG img, VOID* v) {
 	if (_rwKnob || _nxKnob) { // [SoK DBI evasions]
 		MEMORY_LoadImage(img);
 	}
+	Process::OnImageLoad(img);
 	Functions::AddHooks(img); // BluePill API hooks
 }
 
@@ -173,6 +174,7 @@ VOID ImageUnload(IMG img, VOID* v) {
 	if (_rwKnob || _nxKnob) { // [SoK DBI evasions]
 		MEMORY_UnloadImage(img);
 	}
+	Process::OnImageUnload(img);
 }
 
 

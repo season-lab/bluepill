@@ -15,4 +15,9 @@ namespace State {
 		_globalState._timeInfo.tick = 3478921;
 		_globalState._timeInfo._edx_eax = 0x6000000002346573ULL;
 	}
+
+	globalState* getGlobalState() {
+		return &_globalState;
+	}
+
 }

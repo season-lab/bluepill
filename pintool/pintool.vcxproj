@@ -294,6 +294,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\bintree.cpp" />
     <ClCompile Include="src\exceptionHandler.cpp" />
     <ClCompile Include="src\functions.cpp" />
     <ClCompile Include="src\helper.cpp" />
@@ -323,6 +324,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\bintree.h" />
     <ClInclude Include="src\exceptionHandler.h" />
     <ClInclude Include="src\functions.h" />
     <ClInclude Include="src\helper.h" />

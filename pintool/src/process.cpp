@@ -1,5 +1,7 @@
 #include "process.h"
 #include "memory.h"
+#include "state.h"
+#include "bintree.h"
 
 #include <list> 
 #include <iterator> 
@@ -137,5 +139,68 @@ namespace Process {
 		return out;
 	}
 
+	void OnImageLoad(IMG img) {
+		if (IMG_IsMainExecutable(img)) return; // we only want to track Windows DLLs
+
+		const char* imgName = IMG_Name(img).c_str();
+		char* data = strdup(imgName);
+		size_t len = strlen(data) + 1;
+		while (len--) data[len] = tolower(data[len]);
+
+		if (strstr(data, "windows\\system32\\") || strstr(data, "windows\\syswow64\\") ||
+				strstr(data, "windows\\winsxs\\")) {
+			ADDRINT imgStart = IMG_LowAddress(img);
+			ADDRINT imgEnd = IMG_HighAddress(img);
+			
+			PIN_LockClient(); // rendundant? check AOT hooks
+			State::globalState* gs = State::getGlobalState();
+			if (gs->dllRangeITree == NULL) {
+				gs->dllRangeITree = bintree_init(imgStart, imgEnd, (void*)data);
+			} else {
+				bool success = bintree_insert(gs->dllRangeITree, imgStart, imgEnd, (void*)data);
+				if (!success) {
+					LOG_AR("Duplicate range insertion for DLL %s", data);
+					fprintf(stderr, "==> Duplicate range insertion for DLL %s\n", data);
+				}
+			}
+			PIN_UnlockClient();
+			// debugging
+			fprintf(stderr, "==> Added DLL %s with range %0x->%0x\n", data, imgStart, imgEnd);
+			//bintree_print(gs->dllRangeTree, 0);
+			bool validIntervalTree = bintree_verify(gs->dllRangeITree);
+			if (!validIntervalTree) {
+				bintree_print(gs->dllRangeITree, 0);
+			}
+
+		}
+		else {
+			free(data);
+			return;
+		}
+
+
+	}
+
+	void OnImageUnload(IMG img) {
+		if (IMG_IsMainExecutable(img)) return; // only for clarity
+
+		ADDRINT imgStart = IMG_LowAddress(img);
+		ADDRINT imgEnd = IMG_HighAddress(img);
+		PIN_LockClient();
+		State::globalState* gs = State::getGlobalState();
+		if (gs->dllRangeITree) {
+			// oblivious delete
+			gs->dllRangeITree = bintree_delete(gs->dllRangeITree, imgStart, imgEnd);
+			// debugging
+			fprintf(stderr, "==> Deleted DLL %s with range %0x->%0x\n", IMG_Name(img).c_str(), imgStart, imgEnd);
+			//bintree_print(gs->dllRangeTree, 0);
+			bool validIntervalTree = bintree_verify(gs->dllRangeITree);
+			if (!validIntervalTree) {
+				bintree_print(gs->dllRangeITree, 0);
+			}
+		}
+		PIN_UnlockClient();
+
+	}
 
 }
