@@ -1,25 +1,35 @@
 import idaapi
+import json
 import idc
+import os
+
+SEG_PROT_R = 4
+SEG_PROT_W = 2
+SEG_PROT_X = 1
 
 cmd = 'vmmap'
 try:
-	r = idc.SendDbgCommand(cmd)#Eval('SendDbgCommand("%s");' % cmd).split("\n")
-	r = r.splitlines()
-	for s in r:
-		s = s.lstrip("[")
-		s = s.rstrip("]")
-		str = s.split(",")
-		if str[3].strip("\"") != "<no name>":
-			sn = str[3].split("\\")
-			idaapi.add_segm(0, int(str[0]), int(str[1]), sn[len(sn)-1], "DATA")
-			SetSegmentAttr(int(str[0]), SEGATTR_PERM, int(str[2]))
-			SetSegmentAttr(int(str[0]), SEGATTR_ES, 0)
-			SetSegmentAttr(int(str[0]), SEGATTR_CS, 0)
-			SetSegmentAttr(int(str[0]), SEGATTR_SS, 0)
-			SetSegmentAttr(int(str[0]), SEGATTR_DS, 0)
-			SetSegmentAttr(int(str[0]), SEGATTR_FS, 0)
-			SetSegmentAttr(int(str[0]), SEGATTR_GS, 0)
-			
+    mappings = json.loads(idc.send_dbg_command("vmmap"))
+    for start, end, prot, pathname in mappings:
+        # if pathname == "<no name>": continue # Why we should ignore mmapped mapges & co.?
+        perms = 0
+        if prot & SEG_PROT_R: perms |= idaapi.SEGPERM_READ
+        if prot & SEG_PROT_W: perms |= idaapi.SEGPERM_WRITE
+        if prot & SEG_PROT_X: perms |= idaapi.SEGPERM_EXEC
+        name = os.path.basename(pathname)
+        sclass = "DATA" # TODO recognize automatically sclass
+        idaapi.add_segm(0, start, end, name, sclass)
+        idc.set_segm_attr(start, SEGATTR_PERM, perms)
+        idc.set_segm_attr(start, SEGATTR_ES, 0)
+        idc.set_segm_attr(start, SEGATTR_CS, 0)
+        idc.set_segm_attr(start, SEGATTR_SS, 0)
+        idc.set_segm_attr(start, SEGATTR_DS, 0)
+        idc.set_segm_attr(start, SEGATTR_FS, 0)
+        idc.set_segm_attr(start, SEGATTR_GS, 0)
 except:
-	#self.AddLine(idaapi.COLSTR("Debugger is not active or does not export SendDbgCommand()", idaapi.SCOLOR_ERROR))
-	print "Debugger is not active or does not export SendDbgCommand()"
+    #self.AddLine(idaapi.COLSTR("Debugger is not active or does not export send_dbg_command()", idaapi.SCOLOR_ERROR))
+    import traceback
+    traceback.print_exc()
+    print ("\nDebugger is not active or does not export send_dbg_command()")
+
+
