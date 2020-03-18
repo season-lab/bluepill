@@ -59,6 +59,9 @@
     <ClCompile Include="src\process.cpp">
       <Filter>Source files</Filter>
     </ClCompile>
+    <ClCompile Include="src\itree.cpp">
+      <Filter>Source files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source files">
@@ -148,6 +151,9 @@
       <Filter>Header files</Filter>
     </ClInclude>
     <ClInclude Include="src\process.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\itree.h">
       <Filter>Header files</Filter>
     </ClInclude>
   </ItemGroup>

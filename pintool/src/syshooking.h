@@ -46,5 +46,6 @@ namespace SYSHOOKING {
 	VOID SetTLSKey(THREADID tid);
 	VOID SyscallEntry(THREADID thread_id, CONTEXT *ctx, SYSCALL_STANDARD std, void *v);
 	VOID SyscallExit(THREADID thread_id, CONTEXT *ctx, SYSCALL_STANDARD std, void *v);
+	BOOL ReturnsToUserCode(CONTEXT* ctx);
 }
 

@@ -2,10 +2,12 @@
 
 #include "pin.H" // has to go before winheaders.h or everything will break... meh!
 #include "winheaders.h"
+#include "itree.h"
 
 namespace State {
 
 	void init();
+
 
 	struct timeInfo {
 		W::DWORD sleepMs; // WaitForSingleObjectHook, SYSHOOKS::NtDelayexecution_entry, INS_patchRtdsc_exit
@@ -26,6 +28,7 @@ namespace State {
 		W::SHORT ntQueryCounter;
 		W::SHORT flagStep;
 		W::BOOL waitForDebugger;
+		itreenode_t* dllRangeITree;
 	};
 
 	// union would have been great, but how can we rule out nested hooks?
@@ -57,11 +60,18 @@ namespace State {
 			W::LPCWSTR queryWMI; // WMIQueryHookEntry
 		} _wmiQuery;
 		// misc stuff
+		ADDRINT retAddr;
+		bool retAddrInDLL;
+		const char* retAddrInDll_data;
 		ADDRINT getDiskFreeSpaceRetAddr;
 	};
 
 	// timing info
 	//W::DWORD tick;
+
+	// access methods
+	globalState* getGlobalState();
+	hookEntryArgsTLS* getHookEntryTLSArgs();
 };
 
 
