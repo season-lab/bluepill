@@ -1,3 +1,5 @@
+#include "pin.H"
+
 #include "syshooking.h"
 #include "memory.h"
 #include "syshooks.h"
@@ -7,6 +9,8 @@
 #include "state.h"
 #include "HiddenElements.h"
 #include "helper.h"
+#include "itree.h"
+
 
 namespace W {
 #include "windows.h"
@@ -16,6 +20,11 @@ extern TLS_KEY tls_key;
 
 namespace SYSHOOKING {
 	CHAR* syscallIDs[MAXSYSCALLS];
+	W::BOOL isWow64; // TODO put it in a single place...
+	ADDRINT ntdllImgStart, ntdllImgEnd;
+
+	typedef bool(*t_checkCS)(itreenode_t* node, itreenode_t* root, ADDRINT* ESP);
+	t_checkCS checkCS_callback;
 
 	// entries NULL by default (POD)
 	syscall_hook sysEntryHooks[MAXSYSCALLS];
@@ -24,13 +33,16 @@ namespace SYSHOOKING {
 	syscall_hook win32sysExitHooks[MAXWIN32KSYSCALLS-0x1000];
 
 	// helpers
+	VOID getNtdllRangesAndWow64Info();
 	VOID enumSyscalls();
 	VOID registerHooks();
 	VOID getArgumentsOnEntry(CONTEXT *ctx, SYSCALL_STANDARD std, int count, ...);
 	int lookupIndex(const char* syscallName);
-
+	bool checkCallSiteNTDLLWin32(itreenode_t* node, itreenode_t* root, ADDRINT* ESP);
+	bool checkCallSiteNTDLLWow64(itreenode_t* node, itreenode_t* root, ADDRINT* ESP);
 
 	VOID Init() {
+		getNtdllRangesAndWow64Info();
 		enumSyscalls();
 		registerHooks();
 	}
@@ -59,6 +71,11 @@ namespace SYSHOOKING {
 		syscall_t *sc = &tdata->sc;
 
 		sc->syscall_number = syscall_number;
+
+		// TODO for testing purposes
+		//if (ReturnsToUserCode(ctx)) {
+		//	fprintf(stderr, "Syscall %d returns to user code!\n", syscall_number);
+		//}
 
 		//if (!(_rwKnob || _nxKnob)) return; // TODO
 
@@ -114,7 +131,38 @@ namespace SYSHOOKING {
 		}
 	}
 
+	BOOL ReturnsToUserCode(CONTEXT* ctx) {
+		ADDRINT *ESP = (ADDRINT*)PIN_GetContextReg(ctx, REG_STACK_PTR);
+		State::globalState* gs = State::getGlobalState();
+		itreenode_t* node = itree_search(gs->dllRangeITree, *ESP);
+		if (node) { // we might be inside ntdll though
+			return checkCS_callback(node, gs->dllRangeITree, ESP);
+		}
+		return TRUE;
+	}
+
 	/** HELPER METHODS BEGIN HERE **/
+ 
+	// used in getNtdllRangesAndWow64Info()
+	typedef NTSYSAPI W::PIMAGE_NT_HEADERS NTAPI _RtlImageNtHeader(
+		W::PVOID ModuleAddress
+	);
+
+	static VOID getNtdllRangesAndWow64Info() {
+		W::IsWow64Process(W::GetCurrentProcess(), &isWow64); // TODO use different code
+		W::HMODULE image = W::GetModuleHandle("ntdll");
+
+		checkCS_callback = (isWow64) ? checkCallSiteNTDLLWow64 : checkCallSiteNTDLLWin32;
+
+		// credits https://www.oipapio.com/question-547093 as
+		// I couldn't use GetModuleInformation from psapi.dll
+		// (unless I wanted to load the library dynamically)
+		_RtlImageNtHeader* fun = (_RtlImageNtHeader*)W::GetProcAddress(image, "RtlImageNtHeader");
+		W::PIMAGE_NT_HEADERS headers = fun(image);
+
+		ntdllImgStart = (ADDRINT)headers->OptionalHeader.ImageBase; // == (ADDRINT)image
+		ntdllImgEnd = ntdllImgStart + headers->OptionalHeader.SizeOfImage;
+	}
 
 	// ntdll parsing for syscall ordinal extraction
 	static VOID enumSyscalls() {
@@ -165,6 +213,65 @@ namespace SYSHOOKING {
 			*ptr = PIN_GetSyscallArgument(ctx, std, index);
 		}
 		va_end(args);
+	}
+
+	static bool checkCallSiteNTDLLWin32(itreenode_t* node, itreenode_t* root, ADDRINT* ESP) {
+		ADDRINT addr = *ESP;
+		if (addr < ntdllImgStart || addr > ntdllImgEnd) return false;
+
+		// not much black magic: retn [say 10h] or ret
+		// C2 10 00
+		uint8_t bytes[3] = { 0xFF, 0xFF, 0xFF }; // TODO 0 might be fine as well
+		PIN_SafeCopy(bytes, (void*)addr, 6);
+
+		if (!((bytes[0] == 0xC2 && bytes[2] == 0x00) || bytes[0] == 0xC3)) {
+			ASSERT(false, "Check implementation for NTDLL call sites");
+			return false;
+		}
+
+		// the RA for the caller will be at ESP+4
+		ADDRINT ra = *((ADDRINT*)ESP + 1);
+
+		node = itree_search(root, ra);
+		if (node) {
+			//mycerr << "Syscall originated in " << node->dll_name
+			//		 << " and would resume at " << ra << std::endl;
+			return false;
+		}
+
+		return true;
+	}
+
+	static bool checkCallSiteNTDLLWow64(itreenode_t* node, itreenode_t* root, ADDRINT* ESP) {
+		ADDRINT addr = *ESP;
+		if (addr < ntdllImgStart || addr > ntdllImgEnd) return false;
+
+		// black magic: add esp, 4 followed by retn [say 10h] or ret
+		// 83 C4 04
+		// C2 10 00
+		uint8_t bytes[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF }; // TODO 0 might be fine as well
+		PIN_SafeCopy(bytes, (void*)addr, 6);
+		if (!(bytes[0] == 0x83 && bytes[1] == 0xC4 && bytes[2] == 0x04)) {
+			ASSERT(false, "Check implementation for NTDLL call sites");
+			return false;
+		}
+
+		if (!((bytes[3] == 0xC2 && bytes[5] == 0x00) || bytes[3] == 0xC3)) {
+			ASSERT(false, "Check implementation for NTDLL call sites");
+			return false;
+		}
+
+		// the RA for the caller will be at ESP+4
+		ADDRINT ra = *((ADDRINT*)ESP + 1);
+
+		node = itree_search(root, ra);
+		if (node) {
+			//mycerr << "Syscall originated in " << node->dll_name
+			//		  << " and would resume at " << ra << std::endl;
+			return false;
+		}
+
+		return true;
 	}
 
 
