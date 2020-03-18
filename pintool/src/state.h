@@ -31,10 +31,6 @@ namespace State {
 		itreenode_t* dllRangeITree;
 	};
 
-	// access method
-	globalState* getGlobalState();
-
-
 	// union would have been great, but how can we rule out nested hooks?
 	struct hookEntryArgsTLS {
 		ADDRINT cpuid_eax; // INS_patchCpuid_entry
@@ -64,11 +60,18 @@ namespace State {
 			W::LPCWSTR queryWMI; // WMIQueryHookEntry
 		} _wmiQuery;
 		// misc stuff
+		ADDRINT retAddr;
+		bool retAddrInDLL;
+		const char* retAddrInDll_data;
 		ADDRINT getDiskFreeSpaceRetAddr;
 	};
 
 	// timing info
 	//W::DWORD tick;
+
+	// access methods
+	globalState* getGlobalState();
+	hookEntryArgsTLS* getHookEntryTLSArgs();
 };
 
 

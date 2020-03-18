@@ -3,6 +3,7 @@
 #include "HiddenElements.h"
 #include "types.h"
 #include "state.h"
+#include "process.h"
 
 #include <string>
 #include <iostream>
@@ -21,6 +22,13 @@ using namespace std; // KTM FP
 const char netVendor[] = BP_NETVENDOR;
 const char fakeProcess[] = BP_FAKEPROCESS;
 
+// quick hook insertion for return address check: use it with
+// library calls only (syscalls need a different treatment)
+#define RETADDR_HOOK(rtn)	do { \
+								RTN_InsertCall(rtn, IPOINT_BEFORE, \
+								(AFUNPTR)Process::CheckRetAddrLibcall, \
+								IARG_REG_VALUE, REG_STACK_PTR, IARG_END); \
+							} while (0)
 
 namespace Functions {
 	// for internal use only
@@ -273,6 +281,7 @@ namespace Functions {
 					break;
 
 				case(LOADLIBA_INDEX):
+					RETADDR_HOOK(rtn); // TODO inserted just for testing purposes
 					RTN_InsertCall(rtn, IPOINT_BEFORE, (AFUNPTR)LoadLibraryAHook,
 						IARG_FUNCARG_ENTRYPOINT_REFERENCE, 0,
 						IARG_INST_PTR,
@@ -740,6 +749,15 @@ VOID _popenHook(const char **command) {
 VOID LoadLibraryAHook(const char **lib) { // TODO use HiddenElements
 
 	ACTIVE_HOOK(EN_LoadLibrary);
+
+	FetchHookTLS; // TODO added only for testing purposes
+	if (in->retAddrInDLL) {
+		LOG_AR("Loadlibrary within Windows DLL! Happening at %x in:\n==> %s", in->retAddr, (const char*)in->retAddrInDll_data);
+	}
+	else {
+		LOG_AR("Loadlibrary likely from user code!");
+	}
+
 
 	if (lib == NULL || *lib == NULL) return;
 

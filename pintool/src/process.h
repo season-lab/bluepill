@@ -9,4 +9,8 @@ namespace Process {
 	// instrumentation
 	void OnImageLoad(IMG img);
 	void OnImageUnload(IMG img);
+
+	// check on return address
+	VOID CheckRetAddrLibcall(ADDRINT* ESP);
+
 };

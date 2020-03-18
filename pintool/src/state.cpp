@@ -20,4 +20,8 @@ namespace State {
 		return &_globalState;
 	}
 
+	hookEntryArgsTLS* getHookEntryTLSArgs() {
+		return &_hookEntryTLSArgs;
+	}
+
 }

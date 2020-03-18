@@ -50,7 +50,7 @@ bool itree_insert(itreenode_t *tree, ADDRINT start_addr, ADDRINT end_addr, void*
 	return false;
 }
 
-// DCD added node removal for BST
+// DCD added node removal
 itreenode_t* itree_delete(itreenode_t* tree, ADDRINT start_addr, ADDRINT end_addr) {
 	// base case
 	if (tree == NULL) return NULL;
@@ -89,7 +89,7 @@ itreenode_t* itree_delete(itreenode_t* tree, ADDRINT start_addr, ADDRINT end_add
 	return tree;
 }
 
-// Search inside binary tree
+// Search inside interval tree
 itreenode_t *itree_search(itreenode_t *tree, ADDRINT val) {
 	if (!tree)
 		return NULL;
@@ -131,11 +131,11 @@ bool itree_verify(itreenode_t *tree) {
 }
 
 
-void itree_print(itreenode_t *node, UINT64 lvl) {
+void itree_print(itreenode_t *node, ADDRINT lvl) {
 	if (!node)
 		return;
 
-	fprintf(stderr, "Level: %lld , Range: [0x%0x, 0x%0x]\n",
+	fprintf(stderr, "Level: %u , Range: [0x%0x, 0x%0x]\n",
 		lvl, node->start_addr, node->end_addr);
 	itree_print(node->left, lvl + 1);
 	itree_print(node->right, lvl + 1);
@@ -164,7 +164,7 @@ VOID itree_stats(itreenode_t *node) {
 	return;
 }
 
-// Deallocate tree
+// Deallocate interval tree
 BOOL itree_dealloc(itreenode_t* tree) {
 	if (!tree)
 		return true;

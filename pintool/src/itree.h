@@ -16,5 +16,5 @@ BOOL itree_dealloc(itreenode_t* tree);
 bool itree_verify(itreenode_t *tree);
 
 
-void itree_print(itreenode_t *node, UINT64 lvl);
+void itree_print(itreenode_t *node, ADDRINT lvl);
 VOID itree_stats(itreenode_t *node);
