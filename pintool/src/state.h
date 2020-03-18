@@ -2,7 +2,7 @@
 
 #include "pin.H" // has to go before winheaders.h or everything will break... meh!
 #include "winheaders.h"
-#include "bintree.h"
+#include "itree.h"
 
 namespace State {
 
@@ -28,7 +28,7 @@ namespace State {
 		W::SHORT ntQueryCounter;
 		W::SHORT flagStep;
 		W::BOOL waitForDebugger;
-		node_t* dllRangeITree;
+		itreenode_t* dllRangeITree;
 	};
 
 	// access method

@@ -1,7 +1,7 @@
 #include "process.h"
 #include "memory.h"
 #include "state.h"
-#include "bintree.h"
+#include "itree.h"
 
 #include <list> 
 #include <iterator> 
@@ -155,9 +155,9 @@ namespace Process {
 			PIN_LockClient(); // rendundant? check AOT hooks
 			State::globalState* gs = State::getGlobalState();
 			if (gs->dllRangeITree == NULL) {
-				gs->dllRangeITree = bintree_init(imgStart, imgEnd, (void*)data);
+				gs->dllRangeITree = itree_init(imgStart, imgEnd, (void*)data);
 			} else {
-				bool success = bintree_insert(gs->dllRangeITree, imgStart, imgEnd, (void*)data);
+				bool success = itree_insert(gs->dllRangeITree, imgStart, imgEnd, (void*)data);
 				if (!success) {
 					LOG_AR("Duplicate range insertion for DLL %s", data);
 					fprintf(stderr, "==> Duplicate range insertion for DLL %s\n", data);
@@ -167,9 +167,9 @@ namespace Process {
 			// debugging
 			fprintf(stderr, "==> Added DLL %s with range %0x->%0x\n", data, imgStart, imgEnd);
 			//bintree_print(gs->dllRangeTree, 0);
-			bool validIntervalTree = bintree_verify(gs->dllRangeITree);
+			bool validIntervalTree = itree_verify(gs->dllRangeITree);
 			if (!validIntervalTree) {
-				bintree_print(gs->dllRangeITree, 0);
+				itree_print(gs->dllRangeITree, 0);
 			}
 
 		}
@@ -190,13 +190,13 @@ namespace Process {
 		State::globalState* gs = State::getGlobalState();
 		if (gs->dllRangeITree) {
 			// oblivious delete
-			gs->dllRangeITree = bintree_delete(gs->dllRangeITree, imgStart, imgEnd);
+			gs->dllRangeITree = itree_delete(gs->dllRangeITree, imgStart, imgEnd);
 			// debugging
 			fprintf(stderr, "==> Deleted DLL %s with range %0x->%0x\n", IMG_Name(img).c_str(), imgStart, imgEnd);
 			//bintree_print(gs->dllRangeTree, 0);
-			bool validIntervalTree = bintree_verify(gs->dllRangeITree);
+			bool validIntervalTree = itree_verify(gs->dllRangeITree);
 			if (!validIntervalTree) {
-				bintree_print(gs->dllRangeITree, 0);
+				itree_print(gs->dllRangeITree, 0);
 			}
 		}
 		PIN_UnlockClient();
