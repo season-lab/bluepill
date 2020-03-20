@@ -48,19 +48,35 @@ Enabling the `-leak` mitigation has minimal performance impact, while `-nx` and 
 
 BluePill will create a file named `evasions.log` under Pin's folder `C:\Pin311` (modify the `LOGPATH` variable inside `pintool\src\logging.h` to change it) that logs possible evasion attempts intercepted during the execution.  
 
-*>>> We will shortly extend this part and improve (with images) the guide below for setting up a remote GDB session from IDA Pro over BluePill. Please be patient with us for a little bit longer :-) <<<*
-
 ### Debugging via GDB remote interface
 
-To access dissection capabilities of BluePill you need to connect from a debugger to the GDB remote interface of Pin. To this end you need to provide additional options when invoking Pin of the form:
+BluePill supports the use of a debugger to control the execution and carry out malware dissection. We rely on the GDB remote interface of Pin: BluePill can thus be used as a remote backend from your debugger tool if it supports the GDB protocol. In the following we provide instructions to set up a debugging session with IDA Pro.
+
+To enable the debugger interface, you need to provide additional command-line options to both Pin (`-appdebug -appdebug_server_port <port>`) and BluePill (`-debugger`) as follows:
 
 ```
 C:\Pin311\pin.exe -appdebug —appdebug_server_port 10000 -t bluepill32.dll -debugger [other options] -- <file.exe>
 ```
 
-And connect to the desired port number. The application will stay paused until you connect a debugger, but if you instead attach one to the process you will end up debugging Pin and the JIT-ted code. For IDA Pro users select the *Remote GDB debugger* option and connect to `localhost`. To map missing memory segments you can use the `AddSegments.py` IDAPython script available in the `scripts/` folder: we defined a custom `vmmap` GDB command that gets invoked by the script and transfers memory layout information from the pintool to the debugger.
+We will use `10000` as port number in this guide. The application will stay paused until you connect a debugger to the socket: however, if you try *attaching* a local debugger to the process, you will end up debugging the whole Pin engine instead of just the application. The expected output on screen will be something like:
 
-Exception handling requires a workaround for the current GDB server implementation. When you need to pass an exception to the application just send a `wait` command right after you receive the exception message, then disconnect and reconnect IDA to BluePill, which meanwhile will put the execution on hold in response to the command.
+![Pin waiting for a debugger to connect](docs/pin-debugger-port.png)
+
+#### Setting up IDA Pro
+You can now open the executable in IDA and select the *Remote GDB debugger* backend from `Debugger->Switch debugger`. Check that the options (e.g. port number) are correct using `Debugger->Process options` like in the screenshot below:
+
+![IDA debugger settings](docs/ida-debugger-settings.png)
+
+At this point it helps to insert a breakpoint on some address in the main executable section, for instance on the entrypoint. Then you can start your debugging session with `Debugger->Start process`. IDA will notify you that *"There is already a process being debugged by remote. Do you want to attach to it?"*. Just click *Yes* and the debugging session will start, with EIP being somewhere inside in ntdll.dll.
+
+Since memory mapping information is not available by default over the GDB remote protocol, we added a custom debugger command `vmmap` that instructs BluePill to build such a map. We automated this process with a script `addSegments.py` available in the `scripts/` folder: just load it in IDA with `File->Script file`. The script will populate the *Segments* subview of IDA with the memory layout information (i.e. sections and their permissions) for each code module. *Note: we will soon add code to update the Module subview, which currently stays stale.*
+
+You can now debug your sample as BluePill shields you from a whole lot of evasions :-)
+
+Please note that exception handling requires a workaround for the current GDB server implementation. When you need to pass an exception to the application just send a `wait` command right after you receive the exception message, then disconnect and reconnect IDA to BluePill, which meanwhile will put the execution on hold in response to the command.
+
+#### Making stealth code edits
+*We will shortly populate this part explaining the custom GDB commands we introduced to make edits to the code that would stay invisible to self-checksumming schemes. Please be patient with us for a little bit longer :-)*
 
 
 ### Authors
