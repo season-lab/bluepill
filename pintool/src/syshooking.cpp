@@ -6,6 +6,7 @@
 
 #include <iostream>
 
+#include "process.h"
 #include "state.h"
 #include "HiddenElements.h"
 #include "helper.h"
@@ -20,7 +21,6 @@ extern TLS_KEY tls_key;
 
 namespace SYSHOOKING {
 	CHAR* syscallIDs[MAXSYSCALLS];
-	W::BOOL isWow64; // TODO put it in a single place...
 	ADDRINT ntdllImgStart, ntdllImgEnd;
 
 	typedef bool(*t_checkCS)(itreenode_t* node, itreenode_t* root, ADDRINT* ESP);
@@ -149,14 +149,13 @@ namespace SYSHOOKING {
 	);
 
 	static VOID getNtdllRangesAndWow64Info() {
-		W::IsWow64Process(W::GetCurrentProcess(), &isWow64); // TODO use different code
-		W::HMODULE image = W::GetModuleHandle("ntdll");
-
-		checkCS_callback = (isWow64) ? checkCallSiteNTDLLWow64 : checkCallSiteNTDLLWin32;
+		checkCS_callback = (Process::isWow64) ? checkCallSiteNTDLLWow64 : checkCallSiteNTDLLWin32;
 
 		// credits https://www.oipapio.com/question-547093 as
 		// I couldn't use GetModuleInformation from psapi.dll
 		// (unless I wanted to load the library dynamically)
+		W::HMODULE image = W::GetModuleHandle("ntdll");
+
 		_RtlImageNtHeader* fun = (_RtlImageNtHeader*)W::GetProcAddress(image, "RtlImageNtHeader");
 		W::PIMAGE_NT_HEADERS headers = fun(image);
 

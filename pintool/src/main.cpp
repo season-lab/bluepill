@@ -216,7 +216,12 @@ int main(int argc, char *argv[]) {
 		return Usage();
 	}
 
-	//initialize some stuff
+	// check Wow64 information
+	W::BOOL bWow64;
+	W::IsWow64Process((W::HANDLE)(-1), &bWow64);
+	Process::isWow64 = (bWow64 != 0);
+
+	// initialize some stuff
 	PINTOOL_Config();
 	Functions::Init();
 
@@ -241,8 +246,8 @@ int main(int argc, char *argv[]) {
 	IMG_AddInstrumentFunction(Image, NULL);
 	IMG_AddUnloadFunction(ImageUnload, NULL);
 	
-	// patch number of cores
-	Process::patchPEB(BP_NUMCORES);
+	// process PEB
+	Process::patchPEB();
 
 	// exceptional control flow (see context.cpp)
 	PIN_AddContextChangeFunction(CONTEXT_ChangeContext, NULL);
