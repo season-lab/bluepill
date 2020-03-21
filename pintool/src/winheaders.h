@@ -23,6 +23,63 @@ namespace W {
 #define MAX_ADAPTER_DESCRIPTION_LENGTH 128 // IP_ADAPTER_INFO
 #define MAX_ADAPTER_ADDRESS_LENGTH 8 // IP_ADAPTER_INFO
 
+// credits https://www.aldeid.com/wiki/PEB-Process-Environment-Block
+// and https://www.geoffchappell.com/studies/windows/win32/ntdll/structs/peb/index.htm
+typedef struct _PEB32 {
+	W::BYTE InheritedAddressSpace;
+	W::BYTE ReadImageFileExecOptions;
+	W::BYTE BeingDebugged;
+	W::BYTE padding2[53];
+	W::PVOID ApiSetMap; // 0x38
+	W::BYTE padding3[16];
+	W::PVOID ReadOnlySharedMemoryBase; // 0x4c
+	W::BYTE padding4[8];
+	W::PVOID AnsiCodePageData; // 0x58
+	W::PVOID OemCodePageData;
+	W::PVOID UnicodeCaseTableData;
+	W::ULONG NumberOfProcessors;
+	W::ULONG NtGlobalFlag; // 0x68
+	W::BYTE padding5[36];
+	W::PVOID ProcessHeaps; // 0x90
+	W::PVOID GdiSharedHandleTable; // 0x94
+	W::BYTE padding6[336];
+	W::PVOID pShimData;
+	W::BYTE padding7[12];
+	W::PVOID ActivationContextData;
+	W::BYTE padding8[4];
+	W::PVOID SystemDefaultActivationContextData;
+	W::BYTE padding9[52];
+	W::PVOID pContextData;
+	W::BYTE padding10[4];
+	W::BYTE padding11[4]; // DCD added to account for TracingFlags on Win7
+} PEB32, *PPEB32;
+
+// credits: Rolf Rolles http://terminus.rewolf.pl/terminus/structures/ntdll/_PEB_x64.html
+typedef struct _PEB64 {
+	W::BYTE padding1[2]; // pad 0x1
+	W::BYTE BeingDebugged; // @0x02 byte
+	W::BYTE padding2[0x68 - 3]; // pad 0x65
+	W::BYTE ptr_ApiSetMap[8]; // @0x68
+	W::BYTE padding3[0x88 - 0x70]; // pad 0x18
+	W::BYTE ptr_ReadOnlySharedMemoryBase[8]; // @0x88
+	W::BYTE padding4[0xA0 - 0x90]; // pad 0x10
+	W::BYTE ptr_AnsiCodePageData[8]; // @0xA0
+	W::BYTE padding5a[0xB8 - 0xA8]; // pad 0x10
+	W::BYTE NumberOfProcessors[4]; // @OxB8 dword
+	W::BYTE NtGlobalFlag[4]; // @OxBC dword
+	W::BYTE padding5[0x2D8 - 0xC0]; // pad 0x218
+									// DCD: ProcessHeaps and GdiSharedHandleTable are unused
+	W::BYTE ptr_pShimData[8]; // @0x2D8
+	W::BYTE padding7[0x2F8 - 0x2E0]; // pad 0x18
+	W::BYTE ptr_ActivationContextData[8]; // @0x2F8
+	W::BYTE padding8[0x308 - 0x300]; // pad 0x8
+	W::BYTE ptr_SystemDefaultActivationContextData[8]; // @0x308
+	W::BYTE padding9[0x368 - 0x310]; // pad 0x58
+	W::BYTE ptr_pContextData[8]; // @0x368
+	W::BYTE padding10[4 + 0x37C - 0x370]; // pImageHeaderHash + TracingFlags + 4-byte padding for alignment
+} PEB64, *PPEB64;
+
+
 typedef struct _PROCESS_BASIC_INFORMATION {
 	W::NTSTATUS ExitStatus;
 	W::PPEB PebBaseAddress;

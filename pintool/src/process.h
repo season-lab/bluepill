@@ -2,10 +2,14 @@
 #include "pin.H"
 
 namespace Process {
+	extern BOOL isWow64;
 
+	// patch PEB fields
+	VOID patchPEB();
+
+	// for GDB remote debugging
 	BOOL VMMap(std::string* result);
-	VOID patchPEB(int numCores);
-
+	
 	// instrumentation
 	void OnImageLoad(IMG img);
 	void OnImageUnload(IMG img);

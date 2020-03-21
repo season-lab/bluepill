@@ -1,5 +1,6 @@
 #include "ins.h"
 #include "winheaders.h"
+#include "process.h"
 
 using namespace std;
 
@@ -34,11 +35,7 @@ VOID INS_InstrumentINS(INS ins) {
 			if (gs->flagStep == 1) {}
 			else {
 				// FIX PEB for debugging flags
-				W::DWORD zero = 0;
-				W::BYTE* _teb32 = (W::BYTE*)W::NtCurrentTeb();
-				PEB32* peb32 = (PEB32*)(*(W::DWORD*)(_teb32 + 0x30));
-				W::WriteProcessMemory((W::HANDLE)(-1), (W::LPVOID*)(&peb32->BeingDebugged), &zero, sizeof(W::BYTE), 0);
-				W::WriteProcessMemory((W::HANDLE)(-1), (W::LPVOID*)(&peb32->NtGlobalFlag), &zero, sizeof(W::DWORD), 0);
+				Process::patchPEB();
 			}
 		}
 	}
