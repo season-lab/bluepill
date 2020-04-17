@@ -18,11 +18,28 @@ BluePill has been presented in:
 
 *Before going public for BH Europe 2019, we made radical changes that broke the handling of 64-bit code and partially of the WoW64 subsystem: please consider these scenarios experimental as we complete the regression testing.*
 
+### Compilation
+
+BluePill builds on [Intel Pin](https://software.intel.com/en-us/articles/pin-a-dynamic-binary-instrumentation-tool) (v3.11 recommended) and requires Visual Studio 2015 or higher for its compilation.
+
+Pin has some dependencies that require manual inclusion in the project. We created a `Local.props` file that simplifies the project configuration. Its defaults are Pin being installed in `C:\Pin311` and the SDK 8.1 headers being in use: 
+
+```
+  <PropertyGroup Label="UserMacros">
+    <PinFolder>C:\Pin311</PinFolder>
+    <WinHPath>C:/Program Files (x86)/Windows Kits/8.1/Include/um</WinHPath>
+  </PropertyGroup>
+```
+
+For instance, if you wish to use the SDK 10.0.17763.0 headers, after modifying the Project settings in Visual Studio
+you should also change the value of the `WinHPath` property to `C:/Program Files/Windows Kits/10/Include/10.0.17763.0/um`. Similary, modify the property value if your SDK 8.1 headers are installed in `C:/Program Files/` instead of `C:/Program Files (x86)/`. The purpose of this field is to assist Pin when it includes the absolute path of `Windows.h` from its CRT headers.
+
+You should now be able to compile BluePill. Once compilation ends, you will find a `bluepill32.dll` library in the Pin directory. If you encounter a missing `msvc_compat.h` error, make sure that `$(PinFolder)\extras\crt\include` is a valid path.
+
+
 ### Quick start
 
-BluePill builds on Intel Pin and requires Visual Studio 2015 for its compilation.
-
-Extract a recent release of Pin to your disk drive and change the path-related property value in the Visual Studio project when needed: by default we assume Pin v3.11 installed in `C:\Pin311`. Once compilation ends, you will find a `bluepill32.dll` library in `C:\Pin311`. To run an executable under BluePill use:
+To run an executable under BluePill use:
 
 ```
 C:\Pin311\pin.exe -t bluepill32.dll [options] -- <file.exe>
