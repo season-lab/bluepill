@@ -22,7 +22,7 @@ BluePill has been presented in:
 
 BluePill builds on [Intel Pin](https://software.intel.com/en-us/articles/pin-a-dynamic-binary-instrumentation-tool) (v3.11 recommended) and requires Visual Studio 2015 or higher for its compilation.
 
-Pin has some dependencies that require manual inclusion in the project. We created a `Local.props` file that simplifies the project configuration. Its defaults are Pin being installed in `C:\Pin311` and the SDK 8.1 headers being in use: 
+Pin has some dependencies that require manual inclusion in the project. We created a `Locals.props` file that simplifies the project configuration. Its defaults are Pin being installed in `C:\Pin311` and the SDK 8.1 headers being in use: 
 
 ```
   <PropertyGroup Label="UserMacros">
