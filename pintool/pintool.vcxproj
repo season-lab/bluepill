@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -123,7 +123,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(PinFolder)\source\include\pin;$(PinFolder)\source\include\pin\gen;$(PinFolder)\extras\stlport\include;$(PinFolder)\extras;$(PinFolder)\extras\libstdc++\include;$(PinFolder)\extras\crt\include;$(PinFolder)\extras\crt;$(PinFolder)\extras\crt\include\arch-x86_64;$(PinFolder)\extras\components\include;$(PinFolder)\extras\crt\include\kernel\uapi;$(PinFolder)\extras\crt\include\kernel\uapi\asm-x86;$(PinFolder)\extras\xed-intel64\include\xed;$(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>TARGET_IA32E;__LP64__;HOST_IA32E;__PIN__=1;PIN_CRT=1;TARGET_WINDOWS;BIGARRAY_MULTIPLIER=1;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;WIN32;_WINDOWS_H_PATH_=$(WindowsSdkDir)\Include;_PIN_FOLDER="$(PinFolder)"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TARGET_IA32E;__LP64__;HOST_IA32E;__PIN__=1;PIN_CRT=1;TARGET_WINDOWS;BIGARRAY_MULTIPLIER=1;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;WIN32;_WINDOWS_H_PATH_=$(WinHPath);_PIN_FOLDER="$(PinFolder)"</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -167,7 +167,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <AdditionalIncludeDirectories>$(PinFolder)\source\include\pin;$(PinFolder)\source\include\pin\gen;$(PinFolder)\extras\stlport\include;$(PinFolder)\extras;$(PinFolder)\extras\libstdc++\include;$(PinFolder)\extras\crt\include;$(PinFolder)\extras\crt;$(PinFolder)\extras\crt\include\kernel\uapi;$(PinFolder)\extras\crt\include\kernel\uapi\asm-x86;$(PinFolder)\extras\components\include;$(PinFolder)\extras\crt\include\arch-x86;$(PinFolder)\extras\xed-ia32\include\xed</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>TARGET_IA32;__i386__;HOST_IA32;__PIN__=1;PIN_CRT=1;TARGET_WINDOWS;BIGARRAY_MULTIPLIER=1;USING_XED;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;WIN32;_WINDOWS_H_PATH_=$(WindowsSdkDir)\Include;_PIN_FOLDER="$(PinFolder)"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TARGET_IA32;__i386__;HOST_IA32;__PIN__=1;PIN_CRT=1;TARGET_WINDOWS;BIGARRAY_MULTIPLIER=1;USING_XED;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;_WINDOWS_H_PATH_=$(WinHPath);_PIN_FOLDER="$(PinFolder)"</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <ExceptionHandling>
       </ExceptionHandling>
@@ -227,7 +227,7 @@
       <DisableSpecificWarnings>4005;4530;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>include/msvc_compat.h</ForcedIncludeFiles>
       <ShowIncludes>false</ShowIncludes>
-      <PreprocessorDefinitions>TARGET_IA32E;__LP64__;HOST_IA32E;__PIN__=1;PIN_CRT=1;TARGET_WINDOWS;BIGARRAY_MULTIPLIER=1;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;WIN32;_WINDOWS_H_PATH_=$(WindowsSdkDir)\Include;_PIN_FOLDER="$(PinFolder)"</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TARGET_IA32E;__LP64__;HOST_IA32E;__PIN__=1;PIN_CRT=1;TARGET_WINDOWS;BIGARRAY_MULTIPLIER=1;_CRT_SECURE_NO_DEPRECATE;_SECURE_SCL=0;WIN32;_WINDOWS_H_PATH_=$(WinHPath);_PIN_FOLDER="$(PinFolder)"</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalOptions>/export:main /ignore:4210 /ignore:4049 %(AdditionalOptions)</AdditionalOptions>
