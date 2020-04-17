@@ -721,7 +721,7 @@ VOID MEMORY_AddPebAddress() {
 
 #define ARRAYSIZE 8
 
-	PEB *peb;
+	PEB32 *peb;
 	__asm {
 		mov eax, fs:30h
 		mov peb, eax

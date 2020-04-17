@@ -10,6 +10,8 @@ namespace W {
 	#include "Intsafe.h"
 }
 
+#include "winheaders.h"
+
 #define OS_PAGE_SIZE			4096
 #define OS_PAGE_OFFSET_BITS		12
 #define OS_NUM_PAGES			(1 << (32 - OS_PAGE_OFFSET_BITS))
@@ -23,36 +25,7 @@ namespace W {
 #define MEMORY_VERBOSE		0
 #define MEMORY_NX_PARANOID_OLD	0
 
-// credits https://www.aldeid.com/wiki/PEB-Process-Environment-Block
-// and https://www.geoffchappell.com/studies/windows/win32/ntdll/structs/peb/index.htm
-typedef struct PEB32 {
-	W::BYTE InheritedAddressSpace;
-	W::BYTE ReadImageFileExecOptions;
-	W::BYTE BeingDebugged;
-	W::BYTE padding2[53];
-	W::PVOID ApiSetMap; // 0x38
-	W::BYTE padding3[16];
-	W::PVOID ReadOnlySharedMemoryBase; // 0x4c
-	W::BYTE padding4[8];
-	W::PVOID AnsiCodePageData; // 0x58
-	W::PVOID OemCodePageData;
-	W::PVOID UnicodeCaseTableData;
-	W::ULONG NumberOfProcessors;
-	W::ULONG NtGlobalFlag; // 0x68
-	W::BYTE padding5[36];
-	W::PVOID ProcessHeaps; // 0x90
-	W::PVOID GdiSharedHandleTable; // 0x94
-	W::BYTE padding6[336];
-	W::PVOID pShimData;
-	W::BYTE padding7[12];
-	W::PVOID ActivationContextData;
-	W::BYTE padding8[4];
-	W::PVOID SystemDefaultActivationContextData;
-	W::BYTE padding9[52];
-	W::PVOID pContextData;
-	W::BYTE padding10[4];
-	W::BYTE padding11[4]; // DCD added to account for TracingFlags on Win7
-} PEB;
+
 
 typedef struct _MEMORY_BASIC_INFORMATION {
 	W::PVOID  BaseAddress;

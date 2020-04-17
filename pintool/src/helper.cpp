@@ -48,7 +48,7 @@ namespace Helper {
 			return 0;
 		}
 
-		for (BOOL bok = Process32First(processesSnapshot, &processInfo); bok; bok = Process32Next(processesSnapshot, &processInfo)) {
+		for (W::BOOL bok = Process32First(processesSnapshot, &processInfo); bok; bok = Process32Next(processesSnapshot, &processInfo)) {
 			if (pid == processInfo.th32ProcessID) {
 				W::CloseHandle(processesSnapshot);
 				return processInfo.szExeFile;

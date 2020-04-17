@@ -2,6 +2,7 @@
 #include "memory.h"
 #include "state.h"
 #include "itree.h"
+#include "config.h"
 
 #include <list> 
 #include <iterator> 
@@ -14,19 +15,45 @@
 using namespace std;
 
 namespace Process {
+	BOOL isWow64;
+
 	// helpers
 	std::ostream& stringify(std::ostream& out, std::string const& s);
 
-	VOID patchPEB(int numCores) {
-
-		PEB32 *peb; // TODO we are retrieving it in one too many ways in the code :-)
-		__asm {
-			mov eax, fs:30h
-			mov peb, eax
+	VOID patchPEB() {
+		PEB32* peb32 = NULL;
+		PEB64* peb64 = NULL;
+		if (isWow64) {
+			W::BYTE* teb32; // = (W::BYTE*)W::NtCurrentTeb();
+			__asm {
+				mov eax, fs:18h
+				mov teb32, eax
+			}
+			W::BYTE* teb64 = teb32 - 0x2000;
+			peb32 = (PEB32*)(*(W::DWORD*)(teb32 + 0x30));
+			peb64 = (PEB64*)(*(W::DWORD64*)(teb64 + 0x60));
+		}
+		else {
+			__asm {
+				mov eax, fs:30h
+				mov peb32, eax
+			}
 		}
 
-		W::WriteProcessMemory((W::HANDLE)(-1), (W::LPVOID)(&peb->NumberOfProcessors), &numCores, sizeof(W::DWORD), 0);
+		// patch PEB32
+		W::DWORD zero = 0;
+		W::ULONG numCores = BP_NUMCORES;
+		W::HANDLE hProc = (W::HANDLE)(-1);
 
+		W::WriteProcessMemory(hProc, (&peb32->NumberOfProcessors), &numCores, sizeof(W::DWORD), 0);
+		W::WriteProcessMemory(hProc, (&peb32->BeingDebugged), &zero, sizeof(W::BYTE), 0);
+		W::WriteProcessMemory(hProc, (&peb32->NtGlobalFlag), &zero, sizeof(W::DWORD), 0);
+
+		if (isWow64) {
+			W::WriteProcessMemory(hProc, (W::LPVOID)(&peb64->NumberOfProcessors), &numCores, sizeof(W::DWORD), 0);
+			W::WriteProcessMemory(hProc, (&peb64->BeingDebugged), &zero, sizeof(W::BYTE), 0);
+			W::WriteProcessMemory(hProc, (&peb64->NtGlobalFlag), &zero, sizeof(W::DWORD), 0);
+		}
 	}
 
 	/* From IDAngr - Thanks to Andrea Fioraldi */
