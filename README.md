@@ -16,7 +16,21 @@ BluePill has been presented in:
 * ***Black Hat Europe 2019***. *BluePill: Neutralizing Anti-Analysis Behavior in Malware Dissection*. [[link]](https://www.blackhat.com/eu-19/briefings/schedule/index.html#bluepill-neutralizing-anti-analysis-behavior-in-malware-dissection-17685) [[slides]](https://i.blackhat.com/eu-19/Wednesday/eu-19-Delia-BluePill-Neutralizing-Anti-Analysis-Behavior-In-Malware-Dissection.pdf) [[video]](https://www.youtube.com/watch?v=F_AK5eDGeak)
 * ***IEEE Transactions on Information Forensics and Security 2020***. *On the Dissection of Evasive Malware*. [[link]](https://ieeexplore.ieee.org/document/9018111) [[preprint]](https://www.diag.uniroma1.it/~delia/papers/tifs20.pdf)
 
-*Before going public for BH Europe 2019, we made radical changes that broke the handling of 64-bit code and partially of the WoW64 subsystem: please consider these scenarios experimental as we complete the regression testing.*
+### Status for Evasions
+
+Below a partial list of the evasions BluePill countered in our tests on a Windows 7 SP1 32-bit VirtualBox machine for a large deal of executable protectors and armored samples:
+
+Category | Instances
+--- | --- 
+Hypervisor | Guest additions, files, registry entries, libraries, and drivers from VirtualBox
+Hardware | BIOS and firmware strings, MAC address, `cpuid`, disk size, power/thermal capabilities
+Time | Slowdown detection using `rtdsc` and Windows time-related APIs
+Software | Artifacts of common monitoring tools (running processes, GUI windows), parent process, HKL keyboard layout, frozen mouse cursor
+Debugging | Single-step exceptions, `int 2d`, OS queries for active/installed debuggers (e.g. `NtQueryInformationProcess`), Process Entry Block fields
+WMI queries | CPU, disk size, MAC address, ACPI, MUI languages, VirtualBox `VBOXVIDEO`
+DBI | Pointer leaks with FPU instructions, memory contents and permissions (e.g. guard pages, NX enforcing)
+
+*NOTE: Before going public for BH Europe 2019, we made radical changes that broke the handling of 64-bit code and (to a small extent) of the WoW64 subsystem: please consider these scenarios experimental as we complete the regression testing, and feel free to report issues.*
 
 ### Compilation
 
