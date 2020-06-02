@@ -269,14 +269,16 @@ BOOL INS_EnableInsStealth(string input, string *result) {
 		count_patch++;
 		input.erase(0, pos + delimiter_patch.length());
 	}
-	/*	last byte	*/
+	/*	last byte	*/ 
 	UINT32 tmp = strtol(input.c_str(), NULL, 16);
-	ps->patch[count_patch] = (unsigned char)tmp;
+	ps->patch[count_patch++] = (unsigned char)tmp;
 
-	patch_map.insert(pair<UINT32, patch_struct*>(ADDR, ps));
+	ps->patch[count_patch] = '\0';
+
+	patch_map.insert(pair<UINT32, patch_struct*>(ps->start, ps));
 
 	
-	for (UINT32 j = ADDR + 1; j <= ADDR + 6; j++) {
+	for (UINT32 j = ps->start + 1; j <= ps->fin; j++) {
 		patch_map.insert(pair<UINT32, patch_struct*>(j, (patch_struct*)-1));
 	}
 

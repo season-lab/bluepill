@@ -2,7 +2,7 @@
 
 **Update (Mar 21, 2020):** *The official BlackHat video recordings are online! Check the link below and read the TIFS paper :-)*
 
-**BluePill** is an open-source dynamic analysis framework for handling evasive malware. Its goal is to reconcile the transparency properties needed for automatic analyses with the fine-grained execution inspection and altering capabilities required for manual analysis. BluePill is an academic prototype under active development: your feedback is precious and greatly appreciated!
+**BluePill** is an open-source dynamic analysis framework for handling evasive malware. Its goal is to reconcile the transparency properties needed for automatic analyses with the fine-grained execution inspection and altering capabilities required for manual analysis. BluePill is an academic prototype under active development: your feedback is precious!
 
 BluePill can counter many red pills targeting hypervisors, debuggers, third-party analysis tools (e.g. IDA Pro), and timing artifacts. It builds on dynamic binary instrumentation (DBI) to monitor adversarial queries that a sample can make on the environment looking for artifacts, and fix them when their results would give away the presence of an automated analysis or a human agent.
 
@@ -93,7 +93,21 @@ You can now debug your sample as BluePill shields you from a whole lot of evasio
 Please note that exception handling requires a workaround for the current GDB server implementation. When you need to pass an exception to the application just send a `wait` command right after you receive the exception message, then disconnect and reconnect IDA to BluePill, which meanwhile will put the execution on hold in response to the command.
 
 #### Making stealth code edits
-*We will shortly populate this part explaining the custom GDB commands we introduced to make edits to the code that would stay invisible to self-checksumming schemes. Please be patient with us for a little bit longer :-)*
+BluePill implements a unique functionality to patch a code portion when debugging while hiding it from the executing code. An applied patch remains invisible to anti-tampering schemes (e.g. self-checksumming sequences) as it is tighly coupled with the JIT mechanism of Pin. In a nutshell, we redo the JIT compilation to add trampolines that override the compiled (original) instructions and go unnoticed by code protection mechanisms, as memory reads keep being redirected to the original program instructions.
+
+The creation of a patch is divded into three steps:
+1. identifying the code portion you want to overwrite (start and end addresses);
+2. assembling a piece of code to execute instead of the one identified at the previous step;
+3. selecting the continuation address where to transfer execution once the patch has executed.
+
+Consider the code block in the image below, and suppose we want to overwrite the `mov ebp, esp` instruction at address `0x771X37A5` with a `mov eax, esp` instruction (`89 e0` in binary), and then make execution resume at address `0x771X37A8`.
+
+![stealth patching](docs/stealth-patching.png)
+
+When BluePill is operating in debugger mode, we can instruct Pin for patches through a custom GDB command: `set_<START_ADDR>_<END_ADDR>_<CONT_ADDR>_<PATCH_CODE_BYTES>`, with addresses expressed as hex numbers and code patch bytes separated by a comma. For the example above we can use: `set_771c37a6_771c37a6_771c37a8_89,e0`.
+
+Patches can then simply be removed using another custom GDB command: `rm_<START_ADDR>_<END_ADDR>`.
+
 
 
 ### Authors
