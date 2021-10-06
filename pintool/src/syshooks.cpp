@@ -325,12 +325,14 @@ namespace SYSHOOKS {
 				char vbox[] = { "VirtualBox" };
 				char vbox2[] = { "vbox" };
 				char vbox3[] = { "VBOX" };
+				char vbox4[] = { "Virtual Machine" };
 				char escape[] = { "          " };
 				char escape2[] = { "    " };
+				char escape3[] = { "               " };
 				W::ULONG sizeVbox = (W::ULONG)Helper::_strlen_a(vbox);
 				W::ULONG sizeVbox2 = (W::ULONG)Helper::_strlen_a(vbox2);
 				W::ULONG sizeVbox3 = (W::ULONG)Helper::_strlen_a(vbox3);
-
+				W::ULONG sizeVbox4 = (W::ULONG)Helper::_strlen_a(vbox4);
 
 				PSYSTEM_FIRMWARE_TABLE_INFORMATION info = (PSYSTEM_FIRMWARE_TABLE_INFORMATION)sc->arg1;
 				// scan entire bios in order to find vbox string
@@ -342,16 +344,19 @@ namespace SYSHOOKS {
 						memcmp(info->TableBuffer + i, vbox3, sizeVbox3) == 0) {
 						PIN_SafeCopy(info->TableBuffer + i, escape2, sizeof(escape2));
 					}
+					else if (memcmp(info->TableBuffer + i, vbox4, sizeVbox4) == 0) {
+						PIN_SafeCopy(info->TableBuffer + i, escape3, sizeof(escape3));
+					}
 				}
 
 				// VMware part
 				char vmware[] = { "VMware" };
-				char escape3[] = { "      " };
+				char escape4[] = { "      " };
 				W::ULONG vmwareSize = (W::ULONG)Helper::_strlen_a(vmware);
 
 				for (size_t i = 0; i < info->TableBufferLength - vmwareSize; i++) {
 					if (memcmp(info->TableBuffer + i, vmware, vmwareSize) == 0) {
-						PIN_SafeCopy(info->TableBuffer + i, escape3, sizeof(escape3));
+						PIN_SafeCopy(info->TableBuffer + i, escape4, sizeof(escape4));
 					}
 				}
 			}
