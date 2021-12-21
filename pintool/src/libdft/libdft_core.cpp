@@ -4463,7 +4463,7 @@ ins_inspect(INS ins)
 						IARG_MEMORYREAD_EA,
 						IARG_END);
 				/* 32-bit & 16-bit operands */
-				else if (INS_MemoryWriteSize(ins) ==
+				else if (INS_MemoryOperandSize(ins, 0) ==  // replaces INS_MemoryWriteSize(ins) https://github.com/vusec/vuzzer64/pull/22/
 						BIT2BYTE(MEM_WORD_LEN))
 					/* propagate the tag accordingly */
 					INS_InsertCall(ins,
@@ -4585,7 +4585,7 @@ ins_inspect(INS ins)
 						IARG_MEMORYREAD_EA,
 						IARG_END);
 				/* 32-bit & 16-bit operands */
-				else if (INS_MemoryWriteSize(ins) ==
+				else if (INS_MemoryOperandSize(ins, 0) ==  // replaces INS_MemoryWriteSize(ins) https://github.com/vusec/vuzzer64/pull/22/
 						BIT2BYTE(MEM_WORD_LEN))
 					/* propagate the tag accordingly */
 					INS_InsertCall(ins,
@@ -4627,7 +4627,8 @@ ins_inspect(INS ins)
 			/* memory operand */
 			if (INS_OperandIsMemory(ins, OP_0))
 				/* differentiate based on the memory size */
-				switch (INS_MemoryWriteSize(ins)) {
+				// replaces INS_MemoryWriteSize(ins) https://github.com/vusec/vuzzer64/pull/22/
+				switch (INS_MemoryOperandSize(ins, 0)) {
 					/* 4 bytes */
 					case BIT2BYTE(MEM_LONG_LEN):
 					/* propagate the tag accordingly */
@@ -4731,7 +4732,8 @@ ins_inspect(INS ins)
 				/* memory operand */
 				if (INS_OperandIsMemory(ins, OP_0))
 				/* differentiate based on the memory size */
-				switch (INS_MemoryWriteSize(ins)) {
+				// replaces INS_MemoryWriteSize(ins) https://github.com/vusec/vuzzer64/pull/22/
+				switch (INS_MemoryOperandSize(ins, 0)) {
 					/* 4 bytes */
 					case BIT2BYTE(MEM_LONG_LEN):
 					/* propagate the tag accordingly */
@@ -5885,7 +5887,7 @@ ins_inspect(INS ins)
 			/* memory operand */
 			else if (INS_OperandIsMemory(ins, OP_0)) {
 				/* 32-bit operand */
-				if (INS_MemoryWriteSize(ins) ==
+				if (INS_MemoryOperandSize(ins, 0) ==  // replaces INS_MemoryWriteSize(ins) https://github.com/vusec/vuzzer64/pull/22/
 						BIT2BYTE(MEM_LONG_LEN))
 					/* propagate the tag accordingly */
 					INS_InsertCall(ins,
@@ -5942,7 +5944,7 @@ ins_inspect(INS ins)
 			/* memory operand */
 			else if (INS_OperandIsMemory(ins, OP_0)) {
 				/* 32-bit operand */
-				if (INS_MemoryWriteSize(ins) ==
+				if (INS_MemoryOperandSize(ins, 0) ==  // replaces INS_MemoryWriteSize(ins) https://github.com/vusec/vuzzer64/pull/22/
 						BIT2BYTE(MEM_LONG_LEN))
 					/* propagate the tag accordingly */
 					INS_InsertCall(ins,

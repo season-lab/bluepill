@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <PinFolder>C:\Pin311</PinFolder>
+    <PinFolder>C:\Pin316</PinFolder>
     <WinHPath>C:/Program Files (x86)/Windows Kits/8.1/Include/um</WinHPath>
   </PropertyGroup>
   <PropertyGroup>
