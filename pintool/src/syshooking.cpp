@@ -164,6 +164,7 @@ namespace SYSHOOKING {
 	}
 
 	// ntdll parsing for syscall ordinal extraction
+	// Win10 support by borrowing from SNIPER https://github.com/dcdelia/sniper
 	static VOID enumSyscalls() {
 		unsigned char *image = (unsigned char *)W::GetModuleHandle("ntdll");
 		W::IMAGE_DOS_HEADER *dos_header = (W::IMAGE_DOS_HEADER *) image;
@@ -179,17 +180,52 @@ namespace SYSHOOKING {
 		for (W::DWORD i = 0; i < number_of_names; i++) {
 			const char *name = (const char *)(image + address_of_names[i]);
 			unsigned char *addr = image + address_of_functions[address_of_name_ordinals[i]];
-			if (memcmp(name, "Nt", 2)) continue;
-
-			// does the signature match one of these cases?
-			// 1:   mov eax, syscall_number ; mov ecx, some_value
-			// 2:   mov eax, syscall_number ; xor ecx, ecx
-			// 3:   mov eax, syscall_number ; mov edx, 0x7ffe0300
-			// TODO remember to add one more case when we go for Windows 8+
-			if (addr[0] == 0xb8 && (addr[5] == 0xb9 || addr[5] == 0x33 || addr[5] == 0xba)) {
-				ADDRINT syscall_number = *(UINT32*)(addr + 1);
-				ASSERT(!syscallIDs[syscall_number], "Multiple syscalls on same ordinal?");
-				syscallIDs[syscall_number] = strdup(name);
+			if (!memcmp(name, "Zw", 2) || !memcmp(name, "Nt", 2)) {
+#ifdef __LP64__
+				// 64-bit Windows is standard among releases
+				// mov r10, rcx ; mov eax, sycall_number ; syscall; ret
+				// 4C 8B D1 ; B8 ?? ?? ?? ?? ; 0F 05 ; C3
+				if (addr[0] == 0x4C && addr[3] == 0xB8) {
+					UINT16 syscall_number = *(UINT16*)(addr + 4); // could read UINT32 as well
+					if (!syscallIDs[syscall_number] || (!memcmp(name, "Nt", 2) && !memcmp(name, "Zw", 2))) {
+						syscallIDs[syscall_number] = strdup(name);
+					}
+				}
+#else
+				// does the signature match one of these cases? https://gist.github.com/wbenny/b08ef73b35782a1f57069dff2327ee4d
+				// 1:   > WoW64 on Windows XP and Windows 7
+				//      mov eax, syscall_number ; mov ecx, imm32 ; lea edx, [esp+04h] ; call fs:[C0h]
+				//		mov eax, syscall_number ; xor ecx, ecx ; lea edx, [esp+04h] ; call fs:[C0h]
+				//		B8 ?? ?? ?? ?? ; [33 C9 | B9 ?? ?? ?? ??] ; 8D 54 24 04 ; 64 FF 15 C0 00 00 00
+				//		epilogue is add esp, 4 ; retn [??] on Windows 7 while XP has no add
+				//		83 C4 04 ; [C2 ?? ?? | C3]
+				// 2:   > WoW64 on Windows 8 and 8.1 - TODO untested, need a 64-bit Win8 VM :-)
+				//		mov eax, syscall_number; call large dword ptr fs:0C0h ; retn [??] 
+				//		B8 ?? ?? ?? ?? ; 64 FF 15 C0 00 00 00 ; [C2 ?? ?? | C3]  
+				// 3:   > WoW64 on Windows 10
+				//		mov eax, syscall_number; mov edx, imm32; call edx ; retn [??]
+				//		B8 ?? ?? ?? ?? ; B9 ?? ?? ?? ??] ; FF D2 ; [C2 ?? ?? | C3]  
+				// 4:   > x86 - Windows XP and Windows 7
+				//      mov eax, syscall_number ; mov edx, 0x7ffe0300 ; call dword near [edx] ; retn [??] for XP SP3 or 7
+				//		mov eax, syscall_number ; mov edx, 0x7ffe0300 ; call edx ; retn [??] for XP before SP3
+				//      B8 ?? ?? ?? ?? ; BA 00 03 FE 7F; [FF D2 | FF 12] ; [C2 ?? ?? | C3]
+				// 5:	> x86 - Windows 8, 8.1, 10 - TODO untested, need a 32-bit Win8/Win10 VM :)
+				//		mov eax, syscall_number ; call $+?? ; retn [??] ; mov edx, esp ; sysenter ; ret
+				//		B8 ?? ?? ?? ?? ; E8 ?? 00 00 00 ; [C2 ?? ?? | C3] ; 8B D4 ; 0F 34 ; C3
+				if (addr[0] == 0xb8 && (addr[5] == 0xB9		// case 1 and 3
+									|| addr[5] == 0x33	// case 1
+									//|| addr[5] == 0x64	// case 2 - untested!
+									|| addr[5] == 0xBA	// case 4
+									//|| addr[5] == 0xE8  // case 5 - untested!
+					)) {
+					// on Windows 10 the syscall ordinal will be in the two least significant bytes
+					// while the remaining two may be non-zero; we ignore them by reading an UINT16
+					UINT16 syscall_number = *(UINT16*)(addr + 1);
+					if (!syscallIDs[syscall_number] || (!memcmp(name, "Nt", 2) && !memcmp(name, "Zw", 2))) {
+						syscallIDs[syscall_number] = strdup(name);
+					}
+				}
+#endif
 			}
 		}
 	}
